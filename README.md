@@ -6,7 +6,7 @@ This project is an arkanoid game with an openning menue screen which allows the 
 3. Quit the game (by pressing "q").  
 
 When starting a new game, the user could choose either an easy, advanced or fun game, each game type will have different levels.  
-The user presses on "space" to move between the different screens.  
+The user presses on "space" to move between the different screens, and press on "p" to pause the game.  
 If a player gained enough points during the game, he will enter to the high scores list.  
 
 ## How to use  
