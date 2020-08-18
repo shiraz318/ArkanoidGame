@@ -13,3 +13,8 @@ If a player gained enough points during the game, he will enter to the high scor
 1. Locate the biuoop-1.4 jar file in the same location as the ass7game jar file.  
 2. Open the console and type: java -jar ass7game.jar
 
+#### Versioning  
+I used [Github](https://github.com/shiraz318/ArkanoidGame) for version control
+
+#### Author
+Shiraz Berger.
