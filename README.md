@@ -11,7 +11,7 @@ If a player gained enough points during the game, he will enter to the high scor
 
 ## How to use  
 1. Locate the biuoop-1.4 jar file in the same location as the ass7game jar file.  
-2. Open the console and type: java -jar ass7game.jar
+2. Double click on the file or open the console and type: java -jar ass7game.jar  
 
 #### Author
 Shiraz Berger.
