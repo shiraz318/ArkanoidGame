@@ -9,7 +9,6 @@ import interfaces.Collidable;
  * @author Shiraz Berger
  */
 public class CollisionInfo {
-    // Fields
     private Point collisionPoint;
     private Collidable collisionObject;
 
@@ -30,7 +29,7 @@ public class CollisionInfo {
      * @return collisionPoint
      */
     public Point collisionPoint() {
-        return this.collisionPoint;
+        return collisionPoint;
     }
 
     /**
@@ -39,6 +38,6 @@ public class CollisionInfo {
      * @return collisionObject
      */
     public Collidable collisionObject() {
-        return this.collisionObject;
+        return collisionObject;
     }
 }

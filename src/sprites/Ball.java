@@ -17,7 +17,6 @@ import java.awt.Color;
  * @author Shiraz Berger
  */
 public class Ball implements Sprite {
-    // Fields
     private Point center;
     private int radius;
     private Color color;
@@ -71,20 +70,20 @@ public class Ball implements Sprite {
      * @param heightRange - height of the range
      */
     public void setRange(Point startPoint, int widthRange, int heightRange) {
-        this.width = widthRange;
-        this.height = heightRange;
-        this.startRange = startPoint;
+        width = widthRange;
+        height = heightRange;
+        startRange = startPoint;
     }
 
     /**
      * Sets trajectory.
      */
     public void setTrajectory() {
-        Point start = new Point(this.getX(), this.getY());
-        int dx = (int) this.getVelocity().getDx();
-        int dy = (int) this.getVelocity().getDy();
-        Point end = new Point(this.getX() + dx, this.getY() + dy);
-        this.trajectory = new Line(start, end);
+        Point start = new Point(getX(), getY());
+        int dx = (int) getVelocity().getDx();
+        int dy = (int) getVelocity().getDy();
+        Point end = new Point(getX() + dx, getY() + dy);
+        trajectory = new Line(start, end);
     }
 
     /**
@@ -93,7 +92,7 @@ public class Ball implements Sprite {
      * @param colorToChange the wanted color
      */
     public void changeColor(Color colorToChange) {
-        this.color = colorToChange;
+        color = colorToChange;
     }
 
     /**
@@ -102,7 +101,7 @@ public class Ball implements Sprite {
      * @return the x value of the center point
      */
     public int getX() {
-        return (int) this.center.getX();
+        return (int) center.getX();
     }
 
     /**
@@ -111,7 +110,7 @@ public class Ball implements Sprite {
      * @return the y value of the center point
      */
     public int getY() {
-        return (int) this.center.getY();
+        return (int) center.getY();
     }
 
     /**
@@ -120,7 +119,7 @@ public class Ball implements Sprite {
      * @return the radius of the ball
      */
     public int getSize() {
-        return this.radius;
+        return radius;
     }
 
     /**
@@ -129,7 +128,7 @@ public class Ball implements Sprite {
      * @return the color of the ball
      */
     public Color getFillColor() {
-        return this.fillColor;
+        return fillColor;
     }
 
     /**
@@ -138,7 +137,7 @@ public class Ball implements Sprite {
      * @return the start point of the ball range
      */
     public Point getStartRange() {
-        return this.startRange;
+        return startRange;
     }
 
     /**
@@ -147,7 +146,7 @@ public class Ball implements Sprite {
      * @return the width of the ball range
      */
     public int getWidth() {
-        return this.width;
+        return width;
     }
 
     /**
@@ -156,7 +155,7 @@ public class Ball implements Sprite {
      * @return the height of the ball range
      */
     public int getHeight() {
-        return this.height;
+        return height;
     }
 
     /**
@@ -165,7 +164,7 @@ public class Ball implements Sprite {
      * @param gameE the game environment
      */
     public void setGame(GameEnvironment gameE) {
-        this.gameEnvironment = gameE;
+        gameEnvironment = gameE;
     }
 
     /**
@@ -174,7 +173,7 @@ public class Ball implements Sprite {
      * @param c the color
      */
     public void setFillColor(Color c) {
-        this.fillColor = c;
+        fillColor = c;
     }
 
     /**
@@ -183,7 +182,7 @@ public class Ball implements Sprite {
      * @param c the color
      */
     public void setDrawColor(Color c) {
-        this.drawColor = c;
+        drawColor = c;
     }
 
     /**
@@ -192,7 +191,7 @@ public class Ball implements Sprite {
      * @return the frame color of the ball
      */
     public Color getDrawColor() {
-        return this.drawColor;
+        return drawColor;
     }
     /**
      * Draw the ball on the given DrawSurface.
@@ -200,10 +199,10 @@ public class Ball implements Sprite {
      * @param surface - DrawSurface
      */
     public void drawOn(DrawSurface surface) {
-        surface.setColor(this.getFillColor());
-        surface.fillCircle((int) this.getX(), (int) this.getY(), this.getSize());
+        surface.setColor(getFillColor());
+        surface.fillCircle(getX(), getY(), getSize());
         surface.setColor(getDrawColor());
-        surface.drawCircle((int) this.getX(), (int) this.getY(), this.getSize());
+        surface.drawCircle(getX(), getY(), getSize());
 
     }
 
@@ -220,7 +219,7 @@ public class Ball implements Sprite {
      * @param velocity - velocity
      */
     public void setVelocity(Velocity velocity) {
-        this.v = velocity;
+        v = velocity;
     }
 
     /**
@@ -230,7 +229,7 @@ public class Ball implements Sprite {
      * @param dy - the change in position on the `y` axis
      */
     public void setVelocity(double dx, double dy) {
-        this.v = new Velocity(dx, dy);
+        v = new Velocity(dx, dy);
     }
 
     /**
@@ -239,45 +238,50 @@ public class Ball implements Sprite {
      * @return the velocity of the ball
      */
     public Velocity getVelocity() {
-        return this.v;
+        return v;
+    }
+
+    private void setCenter(double x, double y, CollisionInfo collide, Point collidePoint) {
+        // The collision is on the upper line of the collidable.
+        if (collide.collisionObject().getCollisionRectangle().getUpperLine().checkRange(collidePoint)) {
+            y = collidePoint.getY() - getSize() - 1;
+        }
+        // The collision is on the lower line of the collidable.
+        if (collide.collisionObject().getCollisionRectangle().getLowerLine().checkRange(collidePoint)) {
+            y = collidePoint.getY() + getSize() + 1;
+        }
+        // The collision is on the right line of the collidable.
+        if (collide.collisionObject().getCollisionRectangle().getRightLine().checkRange(collidePoint)) {
+            x = collidePoint.getX() + getSize() + 1;
+        }
+        // The collision is on the left line of the collidable.
+        if (collide.collisionObject().getCollisionRectangle().getLeftLine().checkRange(collidePoint)) {
+            x = collidePoint.getX() - getSize() - 1;
+        }
+        // Move the ball to almost the hit point.
+        center = new Point(x, y);
     }
 
     /**
      * Move the ball one step.
      */
     public void moveOneStep() {
-        double y = this.getY();
-        double x = this.getX();
-        // Get the information of the closest collidable that collide with trajectory
-        CollisionInfo collide = this.gameEnvironment.getClosestCollision(this.trajectory);
-        // There is no collision
+        double y = getY();
+        double x = getX();
+        // Get the information of the closest collidable that collide with trajectory.
+        CollisionInfo collide = gameEnvironment.getClosestCollision(trajectory);
+        // There is no collision.
         if (collide == null) {
-            this.center = this.trajectory.end();
+            center = trajectory.end();
         } else {
-            // Get the closest point
+            // Get the closest point.
             Point collidePoint = collide.collisionPoint();
-            // The collision is on the upper line of the collidable
-            if (collide.collisionObject().getCollisionRectangle().getUpperLine().checkRange(collidePoint)) {
-                y = collidePoint.getY() - this.getSize() - 1;
-            }
-            // The collision is on the lower line of the collidable
-            if (collide.collisionObject().getCollisionRectangle().getLowerLine().checkRange(collidePoint)) {
-                y = collidePoint.getY() + this.getSize() + 1;
-            }
-            // The collision is on the right line of the collidable
-            if (collide.collisionObject().getCollisionRectangle().getRightLine().checkRange(collidePoint)) {
-                x = collidePoint.getX() + this.getSize() + 1;
-            }
-            // The collision is on the left line of the collidable
-            if (collide.collisionObject().getCollisionRectangle().getLeftLine().checkRange(collidePoint)) {
-                x = collidePoint.getX() - this.getSize() - 1;
-            }
-            // Move the ball to almost the hit point
-            this.center = new Point(x, y);
-            // Update velocity
-            this.setVelocity(collide.collisionObject().hit(this, collidePoint, this.getVelocity()));
+            // Update the center of the ball.
+            setCenter(x, y, collide, collidePoint);
+            // Update velocity.
+            setVelocity(collide.collisionObject().hit(this, collidePoint, getVelocity()));
         }
-        // Update trajectory
+        // Update trajectory.
         setTrajectory();
     }
 

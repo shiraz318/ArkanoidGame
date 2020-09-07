@@ -4,7 +4,6 @@ package graphics;
  * Point has x and y value
  */
 public class Point {
-    // Fields
     private double x;
     private double y;
 
@@ -26,10 +25,9 @@ public class Point {
      * @return the distance of this point to the other point
      */
     public double distance(Point other) {
-        double xDistance = (this.x - other.x) * (this.x - other.x);
-        double yDistance = (this.y - other.y) * (this.y - other.y);
-        double totalDistance = Math.sqrt(xDistance + yDistance);
-        return totalDistance;
+        double xDistance = (x - other.x) * (x - other.x);
+        double yDistance = (y - other.y) * (y - other.y);
+        return Math.sqrt(xDistance + yDistance);
     }
 
     /**
@@ -39,10 +37,7 @@ public class Point {
      * @return true is the points are equal, false otherwise
      */
     public boolean equals(Point other) {
-        if (this.x == other.x) {
-            return this.y == other.y;
-        }
-        return false;
+        return (x == other.x) && y == other.y;
     }
 
     /**
@@ -51,7 +46,7 @@ public class Point {
      * @return the x value of the point
      */
     public double getX() {
-        return this.x;
+        return x;
     }
 
     /**
@@ -60,6 +55,6 @@ public class Point {
      * @return the y value of the point
      */
     public double getY() {
-        return this.y;
+        return y;
     }
 }

@@ -14,29 +14,48 @@ import java.util.Map;
  */
 public class BlocksDefinitionReader {
 
-    private int width = -1;
-    private int defaultWidth = -1;
-    private int defaultHitPoints = -1;
-    private int height = -1;
-    private int defaultHeight = -1;
-    private String symbol = null;
-    private String defaultSymbol = null;
-    private int hitPoints = -1;
-    private String fill = null;
-    private String defaultFill = null;
-    private String fillK = null;
-    private String stroke = null;
-    private String defaultStroke = null;
-    private int k = -1;
-    private boolean flag = true;
-    private boolean color = false;
-    private boolean image = false;
-    private List<Integer> kListColor = new ArrayList<Integer>();
-    private List<Integer> savekListColor = new ArrayList<Integer>();
-    private List<Integer> savekListImage = new ArrayList<Integer>();
-    private List<Integer> kListImage = new ArrayList<Integer>();
-    private List<String> fillKColorList = new ArrayList<String>();
-    private List<String> fillKImageList = new ArrayList<String>();
+    private int width;
+    private int defaultWidth;
+    private int defaultHitPoints;
+    private int height;
+    private int defaultHeight;
+    private int k;
+    private int hitPoints;
+    private String symbol;
+    private String defaultSymbol;
+    private String fill;
+    private String defaultFill;
+    private String fillK;
+    private String stroke;
+    private String defaultStroke;
+    private boolean flag;
+    private boolean color;
+    private boolean image;
+    private List<Integer> kListColor;
+    private List<Integer> savekListColor;
+    private List<Integer> savekListImage;
+    private List<Integer> kListImage;
+    private List<String> fillKColorList;
+    private List<String> fillKImageList;
+
+    public BlocksDefinitionReader() {
+        this.width = -1;
+        this.defaultWidth = -1;
+        this.defaultHitPoints = -1;
+        this.height = -1;
+        this.defaultHeight = -1;
+        this.hitPoints = -1;
+        this.k = -1;
+        this.flag = true;
+        this.color = false;
+        this.image = false;
+        this.kListColor = new ArrayList<Integer>();
+        this.savekListColor = new ArrayList<Integer>();
+        this.savekListImage = new ArrayList<Integer>();
+        this.kListImage = new ArrayList<Integer>();
+        this.fillKColorList = new ArrayList<String>();
+        this.fillKImageList = new ArrayList<String>();
+    }
 
     /**
      * Sets width.
@@ -44,7 +63,7 @@ public class BlocksDefinitionReader {
      * @param w the w
      */
     public void setWidth(int w) {
-        this.width = w;
+        width = w;
     }
 
     /**
@@ -53,7 +72,7 @@ public class BlocksDefinitionReader {
      * @param h the h
      */
     public void setHeight(int h) {
-        this.height = h;
+        height = h;
     }
 
     /**
@@ -62,7 +81,7 @@ public class BlocksDefinitionReader {
      * @return the width
      */
     public int getWidth() {
-        return this.width;
+        return width;
     }
 
     /**
@@ -71,7 +90,7 @@ public class BlocksDefinitionReader {
      * @return the height
      */
     public int getHeight() {
-        return this.height;
+        return height;
     }
 
 
@@ -84,12 +103,12 @@ public class BlocksDefinitionReader {
     public static BlocksFromSymbolsFactory fromReader(java.io.Reader reader) {
         Map<String, Integer> spacerWidths = new HashMap<String, Integer>();
         Map<String, BlockCreator> blockCreators = new HashMap<String, BlockCreator>();
-
+        String line;
         BlocksDefinitionReader bdr = new BlocksDefinitionReader();
-        BufferedReader br = null;
+        BufferedReader br = new BufferedReader(reader);
+
         try {
-            br = new BufferedReader(reader);
-            String line;
+            // Read line by line and process each line information.
             while ((line = br.readLine()) != null) {
                 bdr.setText(line, spacerWidths, blockCreators);
             }
@@ -99,8 +118,21 @@ public class BlocksDefinitionReader {
         return new BlocksFromSymbolsFactory(spacerWidths, blockCreators);
     }
 
+    // Create a new block.
+    private void createBlock(Map<String, BlockCreator> blockCreators) {
+        BlockCreator blockCreator = new BlocksCreate(width, height, hitPoints, stroke, fill, k);
+        ((BlocksCreate) blockCreator).setOther(fillK, kListColor, fillKColorList, kListImage, fillKImageList);
+        blockCreators.put(symbol, blockCreator);
+        savekListColor = kListColor;
+        savekListImage = kListImage;
+        kListImage = new ArrayList<>();
+        kListColor = new ArrayList<>();
+        fillKImageList = new ArrayList<>();
+        fillKColorList = new ArrayList<>();
+    }
+
     /**
-     * Sets text.
+     * Process information of a given line.
      *
      * @param line          the line
      * @param spacerWidths  the spacer widths
@@ -109,18 +141,11 @@ public class BlocksDefinitionReader {
     public void setText(String line, Map<String, Integer> spacerWidths, Map<String, BlockCreator> blockCreators) {
         String[] info = line.split(" ");
         switch (info[0]) {
-            case "#":
-                break;
             case "sdef":
                 setSpacerWidth(info, spacerWidths);
-                if (!checkValidity()) {
-                    try {
-                        throw new Exception();
-                    } catch (Exception e) {
-                        System.exit(0);
-                    }
-                }
+                if (!checkValidity()) System.exit(0);
                 break;
+                // Default values.
             case "default":
                 for (int i = 0; i < info.length - 1; i++) {
                     String[] def = info[i + 1].split(":");
@@ -128,6 +153,7 @@ public class BlocksDefinitionReader {
                     checkDefault(def[0]);
                 }
                 break;
+                // Block definition.
             case "bdef":
                 String[] part = new String[2];
                 setDefaultValues();
@@ -135,17 +161,7 @@ public class BlocksDefinitionReader {
                     part = info[i].split(":");
                     setValue(part);
                 }
-                BlockCreator blockCreator = new BlocksCreate(this.width, this.height, this.hitPoints, this.stroke,
-                        this.fill, this.k);
-                ((BlocksCreate) blockCreator).setOther(this.fillK, this.kListColor, this.fillKColorList,
-                        this.kListImage, this.fillKImageList);
-                blockCreators.put(this.symbol, blockCreator);
-                this.savekListColor = this.kListColor;
-                this.savekListImage = this.kListImage;
-                this.kListImage = new ArrayList<>();
-                this.kListColor = new ArrayList<>();
-                this.fillKImageList = new ArrayList<>();
-                this.fillKColorList = new ArrayList<>();
+                createBlock(blockCreators);
                 break;
             default:
                 break;
@@ -156,38 +172,38 @@ public class BlocksDefinitionReader {
      * Sets default values.
      */
     public void setDefaultValues() {
-        this.hitPoints = this.defaultHitPoints;
-        this.width = this.defaultWidth;
-        this.height = this.defaultHeight;
-        this.fill = this.defaultFill;
-        this.stroke = this.defaultStroke;
-        this.symbol = this.defaultSymbol;
+        hitPoints = defaultHitPoints;
+        width = defaultWidth;
+        height = defaultHeight;
+        fill = defaultFill;
+        stroke = defaultStroke;
+        symbol = defaultSymbol;
     }
 
     /**
-     * Check default.
+     * Check which default value is given and set it's value.
      *
      * @param defaultValue the default value
      */
     public void checkDefault(String defaultValue) {
         switch (defaultValue) {
             case "hit_points":
-                this.defaultHitPoints = this.hitPoints;
+                defaultHitPoints = hitPoints;
                 break;
             case "width":
-                this.defaultWidth = this.width;
+                defaultWidth = width;
                 break;
             case "height":
-                this.defaultHeight = this.height;
+                defaultHeight = height;
                 break;
             case "symbol":
-                this.defaultSymbol = this.symbol;
+                defaultSymbol = symbol;
                 break;
             case "fill":
-                this.defaultFill = this.fill;
+                defaultFill = fill;
                 break;
             case "stroke":
-                this.defaultStroke = this.stroke;
+                defaultStroke = stroke;
                 break;
             default:
                 break;
@@ -195,15 +211,36 @@ public class BlocksDefinitionReader {
 
     }
 
+    // Check validation of a fill color and image.
+    private boolean checkFillValidation(boolean valid) {
+        if (fill == null) {
+            valid = false;
+            for (int i: savekListColor) {
+                if (i == hitPoints) {
+                    valid = true;
+                    break;
+                }
+            }
+            for (int i: savekListImage) {
+                if (i == hitPoints) {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid) System.out.println("invalid fill");
+        }
+        return valid;
+    }
+
     /**
-     * Check validity boolean.
+     * Check validation.
      *
      * @return the boolean
      */
     public boolean checkValidity() {
         boolean valid = true;
         if (width < 0) {
-            System.out.println("invalid wide");
+            System.out.println("invalid width");
             valid = false;
         }
         if (height < 0) {
@@ -216,71 +253,60 @@ public class BlocksDefinitionReader {
         }
         if (hitPoints < 0) {
             System.out.println("invalid hit_points");
-
             valid = false;
         }
-        if (fill == null) {
-            valid = false;
-            for (int i: this.savekListColor) {
-                if (i == hitPoints) {
-                    valid = true;
-                }
-            }
-            for (int i: this.savekListImage) {
-                if (i == hitPoints) {
-                    valid = true;
-                }
-            }
-            if (!valid) {
-                System.out.println("invalid fill");
-            }
-        }
+        valid = checkFillValidation(valid);
         return valid;
     }
 
+    // Set the fill color or image.
+    private void setFillK(String[] def) {
+        if (def[0].startsWith("fill")) {
+            String[] s = def[0].split("-");
+            k = Integer.parseInt(s[1]);
+            if (def[1].startsWith("image")) {
+                image = true;
+                kListImage.add(k);
+                fillKImageList.add(def[1]);
+
+            } else {
+                color = true;
+                kListColor.add(k);
+                fillK = def[1];
+                fillKColorList.add(fillK);
+            }
+        }
+    }
+
     /**
-     * Sets value.
+     * Sets value by a given definition.
      *
      * @param def the def
      */
     public void setValue(String[] def) {
         switch (def[0]) {
             case "width":
-                this.width = Integer.parseInt(def[1]);
+                width = Integer.parseInt(def[1]);
                 break;
             case "height":
-                this.height = Integer.parseInt(def[1]);
+                height = Integer.parseInt(def[1]);
                 break;
             case "symbol":
-                this.symbol = def[1];
+                symbol = def[1];
                 break;
             case "hit_points":
-                this.hitPoints = Integer.parseInt(def[1]);
+                hitPoints = Integer.parseInt(def[1]);
                 break;
             case "fill":
-                this.fill = def[1];
+                fill = def[1];
                 flag = false;
                 break;
             case "stroke":
-                this.stroke = def[1];
+                stroke = def[1];
                 break;
             default:
                 //set fill-k
-                if (def[0].startsWith("fill")) {
-                    String[] s = def[0].split("-");
-                    this.k = Integer.parseInt(s[1]);
-                    if (def[1].startsWith("image")) {
-                        this.image = true;
-                        this.kListImage.add(this.k);
-                        this.fillKImageList.add(def[1]);
-
-                    } else {
-                        this.color = true;
-                        this.kListColor.add(this.k);
-                        this.fillK = def[1];
-                        this.fillKColorList.add(this.fillK);
-                    }
-                }
+                setFillK(def);
                 break;
 
         }

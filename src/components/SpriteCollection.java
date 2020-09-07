@@ -11,7 +11,6 @@ import java.util.List;
  * @author Shiraz Berger
  */
 public class SpriteCollection {
-    // Fields
     private List<Sprite> spriteCollection;
 
     /**
@@ -27,7 +26,7 @@ public class SpriteCollection {
      * @return the sprite collection
      */
     public List<Sprite> getSpriteCollection() {
-        return this.spriteCollection;
+        return spriteCollection;
     }
 
     /**
@@ -36,14 +35,14 @@ public class SpriteCollection {
      * @param s the sprite
      */
     public void addSprite(Sprite s) {
-        this.spriteCollection.add(s);
+        spriteCollection.add(s);
     }
 
     /**
      * Notify all sprites that time passed.
      */
     public void notifyAllTimePassed() {
-        List<Sprite> spriters = new ArrayList<Sprite>(this.spriteCollection);
+        List<Sprite> spriters = new ArrayList<Sprite>(spriteCollection);
         for (Sprite s : spriters) {
             s.timePassed();
         }
@@ -55,7 +54,7 @@ public class SpriteCollection {
      * @param d the surface
      */
     public void drawAllOn(DrawSurface d) {
-        List<Sprite> spriters = new ArrayList<Sprite>(this.spriteCollection);
+        List<Sprite> spriters = new ArrayList<Sprite>(spriteCollection);
         for (Sprite s : spriters) {
             s.drawOn(d);
         }

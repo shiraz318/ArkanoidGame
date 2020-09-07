@@ -10,7 +10,6 @@ public class Line {
     /**
      * The constant SMALL.
      */
-// Static variabls
     public static final int SMALL = 1;
     /**
      * The constant HIGH.
@@ -29,7 +28,6 @@ public class Line {
      */
     public static final double VERTICAL = (Double.MAX_VALUE);
 
-    // Fields
     private Point start;
     private Point end;
     private double smallX;
@@ -74,7 +72,7 @@ public class Line {
      * @return the length of the line
      */
     public double length() {
-        return this.start.distance(this.end);
+        return start.distance(end);
     }
 
     /**
@@ -83,8 +81,8 @@ public class Line {
      * @return the middle point of the line
      */
     public Point middle() {
-        double xMiddle = (this.end.getX() + this.start.getX()) / 2;
-        double yMiddle = (this.end.getY() + this.start.getY()) / 2;
+        double xMiddle = (end.getX() + start.getX()) / 2;
+        double yMiddle = (end.getY() + start.getY()) / 2;
         return new Point(xMiddle, yMiddle);
     }
 
@@ -94,7 +92,7 @@ public class Line {
      * @return the start point of the line
      */
     public Point start() {
-        return this.start;
+        return start;
     }
 
     /**
@@ -103,7 +101,7 @@ public class Line {
      * @return the end point of the line
      */
     public Point end() {
-        return this.end;
+        return end;
     }
 
     /**
@@ -112,7 +110,7 @@ public class Line {
      * @return the smallest x value of the line
      */
     public double smallX() {
-        return this.smallX;
+        return smallX;
     }
 
     /**
@@ -121,7 +119,7 @@ public class Line {
      * @return the highest x value of the line
      */
     public double highX() {
-        return this.highX;
+        return highX;
     }
 
     /**
@@ -130,7 +128,7 @@ public class Line {
      * @return the highest y value of the line
      */
     public double highY() {
-        return this.highY;
+        return highY;
     }
 
     /**
@@ -139,7 +137,7 @@ public class Line {
      * @return the smallest y value of the line
      */
     public double smallY() {
-        return this.smallY;
+        return smallY;
     }
 
     /**
@@ -152,19 +150,9 @@ public class Line {
      */
     public double findValueSize(double a, double b, int whatToFind) {
         if (a > b) {
-            if (whatToFind == SMALL) {
-                return b;
-                // whatToFind = HIGH
-            } else {
-                return a;
-            }
+            return (whatToFind == SMALL) ? b : a;
             // a <= b
-        } else if (whatToFind == SMALL) {
-            return a;
-            // whatToFind = HIGH
-        } else {
-            return b;
-        }
+        } else return (whatToFind == SMALL) ? a : b;
     }
 
     /**
@@ -174,10 +162,7 @@ public class Line {
      * @return true if the lines intersect, false otherwise
      */
     public boolean isIntersecting(Line other) {
-        if (this.intersectionWith(other) == null) {
-            return false;
-        }
-        return true;
+        return intersectionWith(other) != null;
     }
 
     /**
@@ -189,11 +174,9 @@ public class Line {
      */
     public boolean equalsDouble(double a, double b) {
         double minus = a - b;
-        if ((minus < 0.1) && (minus > -0.1)) {
-            return true;
-        }
-        return false;
+        return ((minus < 0.1) && (minus > -0.1));
     }
+
 
     /**
      * Calculate the intersection Point between two lines if exists.
@@ -202,52 +185,52 @@ public class Line {
      * @return the intersection point if the lines intersect, and null otherwise
      */
     public Point intersectionWith(Line other) {
-        // The lines meet in infinite points, so they dont intersect
-        if (this.equals(other)) {
+        // The lines meet in infinite points, so they do not intersect.
+        if (equals(other)) {
             return null;
         }
-        // Both lines are verticals to the x axis
-        if ((equalsDouble(this.highX, this.smallX)) && (equalsDouble(other.highX, other.smallX))) {
-            return this.verticalsToX(other);
+        // Both lines are verticals to the x axis.
+        if ((equalsDouble(highX, smallX)) && (equalsDouble(other.highX, other.smallX))) {
+            return verticalsToX(other);
         }
-        // Both lines parallel to the x axis
-        if ((equalsDouble(this.highY, this.smallY)) && (equalsDouble(other.highY, other.smallY))) {
-            return this.parallelToX(other);
+        // Both lines parallel to the x axis.
+        if ((equalsDouble(highY, smallY)) && (equalsDouble(other.highY, other.smallY))) {
+            return parallelToX(other);
         }
-        // The lines parallel to one another
-        if ((equalsDouble(this.derivative, other.derivative)) && (equalsDouble(this.constant, other.constant))) {
+        // The lines parallel to one another.
+        if ((equalsDouble(derivative, other.derivative)) && (equalsDouble(constant, other.constant))) {
             return null;
         }
-        // other.constant = this.constant because we allready checked the case of parallel lines
-        if (equalsDouble(this.derivative, other.derivative)) {
-            return this.sameLines(other);
+        // Other.constant = this.constant because we already checked the case of parallel lines.
+        if (equalsDouble(derivative, other.derivative)) {
+            return sameLines(other);
         }
-        // Only this line is vertical to the x axis
-        if (equalsDouble(this.highX, this.smallX)) {
-            double yValue = (other.derivative * this.highX) + other.constant;
-            Point intersectP = new Point(this.highX, yValue);
-            if ((this.checkRange(intersectP)) && (other.checkRange(intersectP))) {
-                return intersectP;
-            }
-            return null;
+        // Only this line is vertical to the x axis.
+        if (equalsDouble(highX, smallX)) {
+            return oneLineVerticalToX(other.derivative, highX, other.constant, other);
         }
-        // Only other line is vertical to the x axis
+        // Only other line is vertical to the x axis.
         if (equalsDouble(other.highX, other.smallX)) {
-            double yValue = (this.derivative * other.highX) + this.constant;
-            Point intersectP = new Point(other.highX, yValue);
-            if ((this.checkRange(intersectP)) && (other.checkRange(intersectP))) {
-                return intersectP;
-            }
-            return null;
+            return oneLineVerticalToX(derivative, other.highX, constant, other);
         }
-        // this.derivative != other.derivative because we allready handeled this case
-        double xValue = (other.constant - this.constant) / (this.derivative - other.derivative);
-        double yValue = (this.derivative * xValue) + this.constant;
+        // this.derivative != other.derivative because we already handled this case.
+        return linesGeneralCase(other);
+
+    }
+
+    // Get intersection point of two lines in the general case.
+    private Point linesGeneralCase(Line other) {
+        double xValue = (other.constant - constant) / (derivative - other.derivative);
+        double yValue = (derivative * xValue) + constant;
         Point intersectP = new Point(xValue, yValue);
-        if ((this.checkRange(intersectP)) && (other.checkRange(intersectP))) {
-            return intersectP;
-        }
-        return null;
+        return ((checkRange(intersectP)) && (other.checkRange(intersectP))) ? intersectP : null;
+    }
+
+    // Get intersection point of two lines when one line is vertical to the x axis.
+    private Point oneLineVerticalToX(double derivative1, double highX1, double constant1, Line other) {
+        double yValue = (derivative1 * highX1) + constant1;
+        Point intersectP = new Point(highX1, yValue);
+        return  ((checkRange(intersectP)) && (other.checkRange(intersectP))) ? intersectP: null;
     }
 
     /**
@@ -257,20 +240,7 @@ public class Line {
      * @return the intersection point if the lines intersect, and null otherwise
      */
     public Point verticalsToX(Line other) {
-        // The lines are parallel
-        if (!equalsDouble(this.highX, other.highX)) {
-            return null;
-        }
-        // The lines meet at the highest y of this line and lowest y of other line
-        if (equalsDouble(this.highY, other.smallY)) {
-            return new Point(this.highX, this.highY);
-        }
-        // The lines meet at the lowest y of this line and highest y of other line
-        if (equalsDouble(this.smallY, other.highY)) {
-            return new Point(this.highX, this.smallY);
-        }
-        // The lines partly equal or one above the other
-        return null;
+        return verticalOrParallelToX(other, true);
     }
 
     /**
@@ -280,19 +250,30 @@ public class Line {
      * @return the intersection point if the lines intersect, and null otherwise
      */
     public Point parallelToX(Line other) {
-        // The lines parallel to one another
-        if (!equalsDouble(this.highY, other.highY)) {
-            return null;
-        }
-        // The lines meet at the highest x of this line and lowest x of other line
-        if (equalsDouble(this.highX, other.smallX)) {
-            return new Point(this.highX, this.highY);
-        }
-        // The lines meet at the lowest x of this line and highest x of other line
-        if (equalsDouble(this.smallX, other.highX)) {
-            return new Point(this.smallX, this.highY);
-        }
-        // The lines partly equal or one near the other
+       return verticalOrParallelToX(other, false);
+    }
+
+    // Get intersection point of two lines when one line is vertical or parallel to the x axis.
+    private Point verticalOrParallelToX(Line other, boolean isVerticalToX) {
+        double thisParallelCheck = isVerticalToX ? highX : highY;
+        double otherParallelCheck = isVerticalToX ? other.highX : other.highY;
+
+        double thisMeetAtUpperPointCheck = isVerticalToX? highY : highX;
+        double otherMeetAtLowerPointCheck = isVerticalToX? other.smallY : other.smallX;
+
+        double thisMeetAtLowestPointCheck = isVerticalToX ? smallY : smallX;
+        double otherMeetAtUpperPointCheck = isVerticalToX ? other.highY : other.highX;
+
+        double xtoReturn = isVerticalToX ? highX : smallX;
+        double yToReturn = isVerticalToX ? smallY : highY;
+
+        // The lines parallel to one another.
+        if (!equalsDouble(thisParallelCheck, otherParallelCheck)) return null;
+        // The meeting point is at the highest of this line and lowest of other line.
+        if (equalsDouble(thisMeetAtUpperPointCheck, otherMeetAtLowerPointCheck)) return new Point(highX, highY);
+        // The meeting point is at the lowest of this line and highest of other line.
+        if (equalsDouble(thisMeetAtLowestPointCheck, otherMeetAtUpperPointCheck)) return new Point(xtoReturn, yToReturn);
+        // The lines partly equal or one above the other
         return null;
     }
 
@@ -303,20 +284,14 @@ public class Line {
      * @return the intersection point if the lines intersect, and null otherwise
      */
     public Point sameLines(Line other) {
-        // Check if the lines have one intersect at the edge of each line
-        if (equalsDouble(this.highY, other.smallY)) {
-            if (this.derivative < 0) {
-                return new Point(this.smallX, this.highY);
-            }
-            return new Point(this.highX, this.highY);
+        // Check if the lines have one intersect at the edge of each line.
+        if (equalsDouble(highY, other.smallY)) {
+            return (derivative < 0) ? new Point(smallX, highY): new Point(highX, highY);
         }
-        if (equalsDouble(this.smallY, other.highY)) {
-            if (this.derivative < 0) {
-                return new Point(this.highX, this.smallY);
-            }
-            return new Point(this.smallX, this.smallY);
+        if (equalsDouble(smallY, other.highY)) {
+            return (derivative < 0) ? new Point(this.highX, this.smallY) : new Point(this.smallX, this.smallY);
         }
-        // The lines either parallel or partly equals
+        // The lines either parallel or partly equals.
         return null;
     }
 
@@ -353,13 +328,10 @@ public class Line {
      * @return true if the point in the range of this line, false otherwise
      */
     public boolean checkRange(Point point) {
-        if ((this.highX < point.getX()) || (this.smallX > point.getX())) {
+        if ((highX < point.getX()) || (smallX > point.getX())) {
             return false;
         }
-        if ((this.highY < point.getY()) || (this.smallY > point.getY())) {
-            return false;
-        }
-        return true;
+        return (!(highY < point.getY())) && (!(smallY > point.getY()));
     }
 
     /**
@@ -369,10 +341,10 @@ public class Line {
      * @return true is the lines are equal, false otherwise
      */
     public boolean equals(Line other) {
-        if (other.start.equals(this.start)) {
-            return (other.end.equals(this.end));
-        } else if (other.start.equals(this.end)) {
-            return (other.end.equals(this.start));
+        if (other.start.equals(start)) {
+            return (other.end.equals(end));
+        } else if (other.start.equals(end)) {
+            return (other.end.equals(start));
         }
         return false;
     }
@@ -386,11 +358,7 @@ public class Line {
      */
     public Point closestIntersectionToStartOfLine(Rectangle rect) {
         List<Point> intersectList = rect.intersectionPoints(this);
-        if (intersectList.isEmpty()) {
-            return null;
-        }
-        return this.findClosestPoint(intersectList);
-
+        return (intersectList.isEmpty()) ? null : findClosestPoint(intersectList);
     }
 
     /**
@@ -402,7 +370,7 @@ public class Line {
     public Point findClosestPoint(List<Point> intersectList) {
         Point closestPoint = intersectList.get(0);
         for (Point p : intersectList) {
-            if (p.distance(this.start()) < closestPoint.distance(this.start())) {
+            if (p.distance(start()) < closestPoint.distance(start())) {
                 closestPoint = p;
             }
         }

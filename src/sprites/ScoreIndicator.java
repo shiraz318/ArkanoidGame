@@ -14,11 +14,9 @@ import java.awt.Color;
  * show how many points the player scored
  */
 public class ScoreIndicator implements Sprite {
-    // Static variables
     public static final int INDICATOR_HEIGHT = 20;
     public static final Point UPPER_LEFT_INDICATOR = new Point(0, 0);
     public static final int SCORE_FONT = 18;
-    // Fields
     private Counter scoreCount;
     private Rectangle scoreIndicator;
 
@@ -34,8 +32,8 @@ public class ScoreIndicator implements Sprite {
 
     @Override
     public void drawOn(DrawSurface d) {
-        int x = (int) this.scoreIndicator.getUpperLeft().getX();
-        int y = (int) this.scoreIndicator.getUpperLeft().getY();
+        int x = (int) scoreIndicator.getUpperLeft().getX();
+        int y = (int) scoreIndicator.getUpperLeft().getY();
         d.setColor(Color.BLUE.darker().darker());
         String score = Integer.toString(scoreCount.getValue());
         int xLocation = x + (GameLevel.WIDTH_GAME / 2) - 90;

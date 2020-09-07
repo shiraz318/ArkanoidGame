@@ -25,7 +25,6 @@ public class GameFlow {
     /**
      * The constant NUMBER_OF_LIVES.
      */
-// static variables
     public static final int NUMBER_OF_LIVES = 7;
     /**
      * The constant FINISH_LEVEL_SCORE.
@@ -39,7 +38,6 @@ public class GameFlow {
      * The constant HEAD_FOLDER.
      */
     public static final String HEAD_FOLDER = "resources/";
-    // fields
     private Counter livesCounter;
     private Counter scoreCounter;
     private KeyboardSensor keyboardSensor;
@@ -72,6 +70,11 @@ public class GameFlow {
         this.highScoresTable = highScoresTable;
         this.highScoresAnimation = highScoresAnimation;
         this.file = new File("highscores");
+        loadHighscores(highScoresTable);
+    }
+
+    // Load information from the highscores file.
+    private void loadHighscores(HighScoresTable highScoresTable) {
         try {
             highScoresTable.load(file);
         } catch (IOException e) {
@@ -93,58 +96,60 @@ public class GameFlow {
     public void runLevels(List<LevelInformation> levels) {
         List<LevelInformation> list = new ArrayList<LevelInformation>(levels);
         for (LevelInformation levelInfo : list) {
-            this.le = new GameLevel(levelInfo, this.animationRunner, this.keyboardSensor,
-                    this.scoreCounter, this.livesCounter);
-            this.levelInformation = levelInfo;
-            this.le.initialize();
-            // while the player has more lives and blocks to remove
-            while ((this.le.getCounterLives().getValue() > 0) && (this.le.getCounterBlocks().getValue() > 0)) {
-
-                this.le.playOneTurn();
-                // all the balls fall
-                if (this.le.getCounterBlocks().getValue() > 0) {
-                    this.le.getCounterLives().decrease(1);
-                }
+            le = new GameLevel(levelInfo, animationRunner, keyboardSensor, scoreCounter, livesCounter);
+            levelInformation = levelInfo;
+            le.initialize();
+            // While the player has more lives and blocks to remove.
+            while ((le.getCounterLives().getValue() > 0) && (le.getCounterBlocks().getValue() > 0)) {
+                le.playOneTurn();
+                // All the balls fall.
+                if (le.getCounterBlocks().getValue() > 0) le.getCounterLives().decrease(1);
             }
-            resetLevel(levelInfo, this.le);
-            if (this.le.getCounterLives().getValue() <= 0) {
-                break;
-            }
-            this.scoreCounter.increase(FINISH_LEVEL_SCORE);
+            resetLevel(levelInfo, le);
+            // No more lives left.
+            if (le.getCounterLives().getValue() <= 0) break;
+            // Add the finish level score.
+            scoreCounter.increase(FINISH_LEVEL_SCORE);
         }
         endGameAnimations();
+    }
+
+    // Add a player to the highscores table.
+    private void addToHighScores() {
+        // If the player have enough points, add it to the table.
+        if (highScoresTable.getRank(scoreCounter.getValue()) <= highScoresTable.size()) {
+            // Ask the player for his name.
+            DialogManager dialog = gui.getDialogManager();
+            String name = dialog.showQuestionDialog("Name", "What is your name?", "");
+            ScoreInfo scoreInfo = new ScoreInfo(name, scoreCounter.getValue());
+            highScoresTable.add(scoreInfo);
+            try {
+                highScoresTable.save(file);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     /**
      * End game.
      */
     public void endGameAnimations() {
-        // there are no more lives - you lost
-        if (this.livesCounter.getValue() <= 0) {
-            Animation gameOver = new GameOverScreen(this.scoreCounter);
-            animationRunner.run(new KeyPressStoppableAnimation(this.keyboardSensor, SPACE_KEY, gameOver));
+        // There are no more lives - the player lost.
+        if (livesCounter.getValue() <= 0) {
+            Animation gameOver = new GameOverScreen(scoreCounter);
+            animationRunner.run(new KeyPressStoppableAnimation(keyboardSensor, SPACE_KEY, gameOver));
             livesCounter.increase(NUMBER_OF_LIVES);
-            // ther are more lives - you win
+            // There are more lives - the player win.
         } else if (scoreCounter.getValue() > 0) {
-            Animation youWin = new YouWinScreen(this.scoreCounter);
-            animationRunner.run(new KeyPressStoppableAnimation(this.keyboardSensor, SPACE_KEY, youWin));
+            Animation youWin = new YouWinScreen(scoreCounter);
+            animationRunner.run(new KeyPressStoppableAnimation(keyboardSensor, SPACE_KEY, youWin));
         }
-        //add the player to the highscorse table if needed
-        if (highScoresTable.getRank(scoreCounter.getValue()) <= highScoresTable.size()) {
-            DialogManager dialog = gui.getDialogManager();
-            String name = dialog.showQuestionDialog("Name", "What is your name?", "");
-            ScoreInfo scoreInfo = new ScoreInfo(name, scoreCounter.getValue());
-            highScoresTable.add(scoreInfo);
-            try {
-                highScoresTable.save(this.file);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        animationRunner.run(this.highScoresAnimation);
-        this.score = this.scoreCounter.getValue();
-        this.scoreCounter.decrease(score);
-
+        // Add the player to the high scores table if needed.
+        addToHighScores();
+        animationRunner.run(highScoresAnimation);
+        score = scoreCounter.getValue();
+        scoreCounter.decrease(score);
     }
 
     /**

@@ -13,9 +13,7 @@ import java.awt.Color;
  * show how many lives are left
  */
 public class LivesIndicator implements Sprite {
-    // Static variables
     public static final int WIDE_OF_LIVES = 250;
-    // Fields
     private Counter countLives;
     private Rectangle livesIndicator;
 
@@ -33,8 +31,8 @@ public class LivesIndicator implements Sprite {
 
     @Override
     public void drawOn(DrawSurface d) {
-        int x = (int) this.livesIndicator.getUpperLeft().getX();
-        int y = (int) this.livesIndicator.getUpperLeft().getY();
+        int x = (int) livesIndicator.getUpperLeft().getX();
+        int y = (int) livesIndicator.getUpperLeft().getY();
         d.setColor(Color.BLUE.darker().darker());
         String lives = Integer.toString(countLives.getValue());
         int high = ScoreIndicator.INDICATOR_HEIGHT;

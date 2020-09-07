@@ -13,7 +13,6 @@ import java.awt.Color;
  * a countdown from countFrom back to 1
  */
 public class CountdownAnimation implements Animation {
-    // field
     private double numOfSeconds;
     private int countFrom;
     private SpriteCollection gameScreen;
@@ -37,21 +36,19 @@ public class CountdownAnimation implements Animation {
     }
     @Override
     public void doOneFrame(DrawSurface d) {
-        this.stop = false;
-        this.gameScreen.drawAllOn(d);
+        stop = false;
+        gameScreen.drawAllOn(d);
         d.setColor(Color.GRAY.brighter());
-        d.drawText((d.getWidth() / 2) - 15, d.getHeight() / 2, Integer.toString(this.countFrom), 70);
-        this.framesPerNumber = this.framesPerNumber - (double) (1000 / 60);
-        if ((this.framesPerNumber <= 0) && (this.countFrom != 0)) {
-            this.countFrom = this.countFrom - 1;
-            this.framesPerNumber = this.appearances;
+        d.drawText((d.getWidth() / 2) - 15, d.getHeight() / 2, Integer.toString(countFrom), 70);
+        framesPerNumber = framesPerNumber - (double) (1000 / 60);
+        if ((framesPerNumber <= 0) && (countFrom != 0)) {
+            countFrom = countFrom - 1;
+            framesPerNumber = appearances;
         }
-        if (this.countFrom == 0) {
-            this.stop = true;
-        }
+        if (countFrom == 0) stop = true;
     }
     @Override
     public boolean shouldStop() {
-        return this.stop;
+        return stop;
     }
 }

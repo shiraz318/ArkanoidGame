@@ -26,7 +26,7 @@ public class ScoreInfo implements Serializable {
      * @return the name
      */
     public String getName() {
-        return this.name;
+        return name;
     }
 
     /**
@@ -35,6 +35,6 @@ public class ScoreInfo implements Serializable {
      * @return the score
      */
     public int getScore() {
-        return this.score;
+        return score;
     }
 }

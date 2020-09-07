@@ -7,7 +7,6 @@ import graphics.Point;
  * Velocity specifies the change in position on the `x` and the `y` axes
  */
 public class Velocity {
-    // Field
     private double dx;
     private double dy;
 
@@ -43,7 +42,7 @@ public class Velocity {
      * @return the change in position on the `x` axis of the ball
      */
     public double getDx() {
-        return this.dx;
+        return dx;
     }
 
     /**
@@ -52,7 +51,7 @@ public class Velocity {
      * @return the change in position on the `y` axis of the ball
      */
     public double getDy() {
-        return this.dy;
+        return dy;
     }
 
     /**
@@ -62,8 +61,8 @@ public class Velocity {
      * @return point with position (x+dx, y+dy)
      */
     public Point applyToPoint(Point p) {
-        double x = p.getX() + this.dx;
-        double y = p.getY() + this.dy;
+        double x = p.getX() + dx;
+        double y = p.getY() + dy;
         return new Point(x, y);
     }
 }

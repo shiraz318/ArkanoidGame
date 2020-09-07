@@ -8,10 +8,9 @@ import sprites.Block;
  * The type Score tracking listener.
  */
 public class ScoreTrackingListener implements HitListener {
-    // Static variables
     public static final int HIT_SCORE = 5;
     public static final int DESTROYING_SCORE = 10;
-    // Fields
+
     private Counter currentScore;
 
     /**

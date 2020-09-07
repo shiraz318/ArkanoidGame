@@ -14,7 +14,7 @@ public class BallRemover implements HitListener {
     private Counter remainingBalls;
 
     /**
-     * Constrct a new Ball remover.
+     * Construct a new Ball remover.
      *
      * @param gameLevel the gameLevel
      * @param removedBalls the number of removed balls
@@ -26,7 +26,7 @@ public class BallRemover implements HitListener {
 
     @Override
     public void hitEvent(Block beingHit, Ball hitter) {
-        this.remainingBalls.decrease(1);
-        hitter.removeFromGame(this.gameLevel);
+        remainingBalls.decrease(1);
+        hitter.removeFromGame(gameLevel);
     }
 }

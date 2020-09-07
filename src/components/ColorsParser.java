@@ -7,13 +7,8 @@ import java.awt.Color;
  * The type Colors parser.
  */
 public class ColorsParser {
-    /**
-     * Color from string java . awt . color.
-     *
-     * @param s the s
-     * @return the java . awt . color
-     */
-// parse color definition and return the specified color.
+
+    // Parse color definition and return the specified color.
     public java.awt.Color colorFromString(String s) {
         switch (s) {
             case "black":
@@ -40,17 +35,16 @@ public class ColorsParser {
                 return Color.YELLOW;
             default:
                 return checkRGB(s);
-                //return null;
         }
     }
 
     /**
      * Check rgb color.
      *
-     * @param s the s
-     * @return the color
+     * @param s the string color.
+     * @return the matching color.
      */
-    public Color checkRGB(String s) {
+    private Color checkRGB(String s) {
         String[] c = s.split(",");
         return new Color(Integer.parseInt(c[0]), Integer.parseInt(c[1]), Integer.parseInt(c[2]));
     }

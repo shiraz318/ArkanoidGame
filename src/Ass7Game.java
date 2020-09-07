@@ -29,12 +29,18 @@ import static components.GameFlow.SIZE;
  */
 public class Ass7Game {
 
-    private List<LevelInformation> levels = new ArrayList<LevelInformation>();
+    private List<LevelInformation> levels;
     private GameFlow gameFlow;
-    private List<String> symbols = new ArrayList<String>();
-    private List<String> names = new ArrayList<String>();
-    private List<String> path = new ArrayList<String>();
+    private List<String> symbols;
+    private List<String> names;
+    private List<String> path;
 
+    public Ass7Game() {
+        levels =  new ArrayList<LevelInformation>();
+        symbols = new ArrayList<String>();
+        names = new ArrayList<String>();
+        path = new ArrayList<String>();
+    }
     /**
      * Animation of ball game.
      *
@@ -43,6 +49,7 @@ public class Ass7Game {
     public static void main(String[] args) {
         Ass7Game game = new Ass7Game();
         if (args.length == 0) {
+            // Default file.
             game.readLevelSets("level_sets.txt");
         } else {
             game.readLevelSets(args[0]);
@@ -57,8 +64,8 @@ public class Ass7Game {
      */
     public void setSymbolAndName(String line) {
         String[] components = line.split(":");
-        this.symbols.add(components[0]);
-        this.names.add(components[1]);
+        symbols.add(components[0]);
+        names.add(components[1]);
     }
 
     /**
@@ -67,7 +74,7 @@ public class Ass7Game {
      * @param line the line
      */
     public void setFilePath(String line) {
-        this.path.add(line);
+        path.add(line);
     }
 
     /**
@@ -79,9 +86,8 @@ public class Ass7Game {
         try {
             InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(fileName);
             Reader reader = new InputStreamReader(is);
-            LineNumberReader br = null;
             try {
-                br = new LineNumberReader(reader);
+                LineNumberReader br = new LineNumberReader(reader);
                 String line;
                 while ((line = br.readLine()) != null) {
                     if (br.getLineNumber() % 2 == 1) {
@@ -105,39 +111,58 @@ public class Ass7Game {
      * @param args the args
      */
     public void setAndApplyMenu(String[] args) {
+
         AnimationRunner an = new AnimationRunner();
         KeyboardSensor sensor = an.getGui().getKeyboardSensor();
+
+        // High scores animation setting.
         HighScoresTable highScoresTable = new HighScoresTable(SIZE);
         Animation highScoresAnimation = new KeyPressStoppableAnimation(
                 sensor, SPACE_KEY, new HighScoresAnimation(highScoresTable));
-        this.gameFlow = new GameFlow(an, sensor, an.getGui(), highScoresTable, highScoresAnimation);
+        gameFlow = new GameFlow(an, sensor, an.getGui(), highScoresTable, highScoresAnimation);
 
-        Menu<Task<Void>> menu = new MenuAnimation<Task<Void>>(sensor, an);
-        Menu<Task<Void>> subMenu = new MenuAnimation<Task<Void>>(sensor, an);
-        for (int i = 0; i < this.symbols.size(); i++) {
-            List<LevelInformation> l = setLevels(this.path.get(i));
-            subMenu.addSelection(symbols.get(i), "(" + symbols.get(i) + ") " + names.get(i), new Ass7Game.StartGame(l));
-        }
-        menu.addSubMenu("s", "(s) Start game", subMenu);
-        menu.addSelection("h", "(h) High scores", new Ass7Game.ShowHiScoresTask(an, highScoresAnimation));
-        menu.addSelection("q", "(q) Quit", new Ass7Game.Quit());
+        // Menu setting.
+        Menu<Task<Void>> menu = setMenu(an, sensor, highScoresAnimation);
+
+        // Apply.
+        applyMenu(an, menu);
+
+    }
+
+    // Apply the given menu.
+    private void applyMenu(AnimationRunner an, Menu<Task<Void>> menu) {
         while (true) {
             an.run(menu);
             Task<Void> task = menu.getStatus();
             task.run();
         }
+    }
 
+    // Set a menu definitions.
+    private Menu<Task<Void>> setMenu(AnimationRunner an, KeyboardSensor sensor, Animation highScoresAnimation) {
+        Menu<Task<Void>> menu = new MenuAnimation<Task<Void>>(sensor, an);
+        Menu<Task<Void>> subMenu = new MenuAnimation<Task<Void>>(sensor, an);
+
+        for (int i = 0; i < symbols.size(); i++) {
+            // Create level for each symbol and add it to the submenu selections.
+            List<LevelInformation> l = setLevels(path.get(i));
+            subMenu.addSelection(symbols.get(i), "(" + symbols.get(i) + ") " + names.get(i), new StartGame(l));
+        }
+        menu.addSubMenu("s", "(s) Start game", subMenu);
+        menu.addSelection("h", "(h) High scores", new ShowHiScoresTask(an, highScoresAnimation));
+        menu.addSelection("q", "(q) Quit", new Quit());
+        return menu;
     }
 
     /**
-     * The type Show hi scores task.
+     * The type Show high scores task.
      */
     public class ShowHiScoresTask implements Task<Void> {
         private Animation highScoresAnimation;
         private AnimationRunner animationRunner;
 
         /**
-         * Instantiates a new Show hi scores task.
+         * Instantiates a new Show high scores task.
          *
          * @param runner              the runner
          * @param highScoresAnimation the high scores animation
@@ -148,7 +173,7 @@ public class Ass7Game {
         }
         @Override
         public Void run() {
-            animationRunner.run(this.highScoresAnimation);
+            animationRunner.run(highScoresAnimation);
             return null;
         }
     }
@@ -180,7 +205,7 @@ public class Ass7Game {
         }
         @Override
         public Void run() {
-            gameFlow.runLevels(this.levelInformations);
+            gameFlow.runLevels(levelInformations);
             return null;
         }
     }

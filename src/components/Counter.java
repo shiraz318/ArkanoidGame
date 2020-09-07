@@ -3,7 +3,6 @@ package components;
  * The type Counter.
  */
 public class Counter {
-    //fields
     private int count;
 
     /**
@@ -21,7 +20,7 @@ public class Counter {
      * @param number the number
      */
     public void increase(int number) {
-        this.count += number;
+        count += number;
     }
 
     /**
@@ -30,7 +29,7 @@ public class Counter {
      * @param number the number
      */
     public void decrease(int number) {
-        this.count -= number;
+        count -= number;
     }
 
     /**
@@ -39,6 +38,6 @@ public class Counter {
      * @return the value
      */
     public int getValue() {
-        return this.count;
+        return count;
     }
 }

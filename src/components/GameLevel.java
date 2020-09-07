@@ -34,7 +34,6 @@ public class GameLevel implements Animation {
     /**
      * The constant WIDTH_GAME.
      */
-// Static variables
     public static final int WIDTH_GAME = 800;
     /**
      * The constant HEIGHT_GAME.
@@ -72,7 +71,6 @@ public class GameLevel implements Animation {
      * The constant COUNT_FROM.
      */
     public static final int COUNT_FROM = 3;
-    // Fields
     private SpriteCollection sprites;
     private GameEnvironment environment;
     private Counter blocksCounter;
@@ -127,7 +125,7 @@ public class GameLevel implements Animation {
      * @return the balls count
      */
     public int getBallsCount() {
-        return this.ballsCounter.getValue();
+        return ballsCounter.getValue();
     }
 
     /**
@@ -136,7 +134,7 @@ public class GameLevel implements Animation {
      * @return the block remover
      */
     public HitListener getBlockRemover() {
-        return this.blockRemover;
+        return blockRemover;
     }
 
     /**
@@ -145,7 +143,7 @@ public class GameLevel implements Animation {
      * @return the score tracking listener
      */
     public HitListener getScoreTrackingListener() {
-        return this.scoreTrackingListener;
+        return scoreTrackingListener;
     }
 
     /**
@@ -154,7 +152,7 @@ public class GameLevel implements Animation {
      * @return the blocks counter
      */
     public Counter getCounterBlocks() {
-        return this.blocksCounter;
+        return blocksCounter;
     }
 
     /**
@@ -163,7 +161,7 @@ public class GameLevel implements Animation {
      * @return the lives counter
      */
     public Counter getCounterLives() {
-        return this.livesCounter;
+        return livesCounter;
     }
 
     /**
@@ -172,7 +170,7 @@ public class GameLevel implements Animation {
      * @param c the collidable to add
      */
     public void addCollidable(Collidable c) {
-        this.environment.addCollidable(c);
+        environment.addCollidable(c);
     }
 
     /**
@@ -181,7 +179,7 @@ public class GameLevel implements Animation {
      * @param s the sprite to add
      */
     public void addSprite(Sprite s) {
-        this.sprites.addSprite(s);
+        sprites.addSprite(s);
     }
 
     /**
@@ -196,27 +194,32 @@ public class GameLevel implements Animation {
         createPaddle();
     }
 
+    // Set the death region block.
+    private void setDeathRegion() {
+        deathRegion = new Block(new Point(0, HEIGHT_GAME), WIDTH_GAME, FRAME_WIDTH);
+        deathRegion.getCollisionRectangle().setFillColor(BACKGRAUND_COLOR);
+        deathRegion.getCollisionRectangle().setFrameColor(BACKGRAUND_COLOR);
+        deathRegion.getCollisionRectangle().setTextColor(deathRegion.getCollisionRectangle().getFillColor());
+        deathRegion.setHitPoints(0);
+        deathRegion.addHitListener(ballRemover);
+        deathRegion.addToGame(this);
+    }
+
     /**
-     * Create frame and add it to the game.
+     * Create a frame and add it to the game.
      */
     public void createFrame() {
         Block[] frame = new Block[3];
         int high = ScoreIndicator.INDICATOR_HEIGHT;
-        // down - death region
-        this.deathRegion = new Block(new Point(0, HEIGHT_GAME), WIDTH_GAME, FRAME_WIDTH);
-        // up
+        // Down - death region.
+        setDeathRegion();
+        // Up.
         frame[0] = new Block(new Point(0, high), WIDTH_GAME, FRAME_WIDTH);
-        // right
+        // Right.
         frame[1] = new Block(new Point(WIDTH_GAME - FRAME_WIDTH, high), FRAME_WIDTH, HEIGHT_GAME);
-        // left
+        // Left.
         frame[2] = new Block(new Point(0, high), FRAME_WIDTH, HEIGHT_GAME);
-        // Set color, hit points and add to the game
-        this.deathRegion.getCollisionRectangle().setFillColor(BACKGRAUND_COLOR);
-        this.deathRegion.getCollisionRectangle().setFrameColor(BACKGRAUND_COLOR);
-        this.deathRegion.getCollisionRectangle().setTextColor(this.deathRegion.getCollisionRectangle().getFillColor());
-        this.deathRegion.setHitPoints(0);
-        this.deathRegion.addHitListener(this.ballRemover);
-        this.deathRegion.addToGame(this);
+        // Set color, hit points and add to the game.
         for (int i = 0; i < frame.length; i++) {
             frame[i].getCollisionRectangle().setColors(Color.GRAY);
             frame[i].setHitPoints(0);
@@ -230,34 +233,34 @@ public class GameLevel implements Animation {
      * @return the death region
      */
     public Block getDeathRegion() {
-        return this.deathRegion;
+        return deathRegion;
     }
 
     /**
      * Create score indicator.
      */
     public void createScoreIndicator() {
-        Sprite indicator = new ScoreIndicator(this.scoreCounter);
-        this.sprites.addSprite(indicator);
+        Sprite indicator = new ScoreIndicator(scoreCounter);
+        sprites.addSprite(indicator);
     }
 
     /**
      * Create lives indicator.
      */
     public void createLivesIndicator() {
-        Sprite indicator = new LivesIndicator(this.livesCounter);
-        this.sprites.addSprite(indicator);
+        Sprite indicator = new LivesIndicator(livesCounter);
+        sprites.addSprite(indicator);
     }
 
     /**
      * Create blocks and add them to the game.
      */
     public void createBlocks() {
-        this.bCopy = new ArrayList<>(blocks);
+        bCopy = new ArrayList<>(blocks);
         for (Block b: bCopy) {
            // b.setHitPoints();
-             b.addHitListener(this.blockRemover);
-             b.addHitListener(this.scoreTrackingListener);
+             b.addHitListener(blockRemover);
+             b.addHitListener(scoreTrackingListener);
              b.addToGame(this);
         }
     }
@@ -266,15 +269,15 @@ public class GameLevel implements Animation {
      * Create balls and add them to the game.
      */
     public void createBall() {
-        this.balls = new Ball[level.numberOfBalls()];
+        balls = new Ball[level.numberOfBalls()];
         int wide = level.paddleWidth() / 2;
         for (int i = 0; i < balls.length; i++) {
-            int x = (int) this.paddle.getCollisionRectangle().getUpperLeft().getX() + wide;
-            int y = (int) this.paddle.getCollisionRectangle().getUpperLeft().getY() - RADIUS_GAME;
+            int x = (int) paddle.getCollisionRectangle().getUpperLeft().getX() + wide;
+            int y = (int) paddle.getCollisionRectangle().getUpperLeft().getY() - RADIUS_GAME;
             balls[i] = new Ball(new Point(x, y), RADIUS_GAME, Color.WHITE);
             balls[i].setVelocity(level.initialBallVelocities().get(i));
             balls[i].setTrajectory();
-            balls[i].setGame(this.environment);
+            balls[i].setGame(environment);
             balls[i].addToGame(this);
         }
     }
@@ -286,19 +289,19 @@ public class GameLevel implements Animation {
         int x = (WIDTH_GAME / 2) - (level.paddleWidth() / 2);
         int y = HEIGHT_GAME - FRAME_WIDTH - PADDLE_HEIGHT;
         Point upperLeft = new Point(x, y);
-        this.paddle = new Paddle(upperLeft, level.paddleWidth(), PADDLE_HEIGHT, this.keyboard);
-        this.paddle.getCollisionRectangle().setFillColor(Color.GRAY.darker());
+        paddle = new Paddle(upperLeft, level.paddleWidth(), PADDLE_HEIGHT, keyboard);
+        paddle.getCollisionRectangle().setFillColor(Color.GRAY.darker());
 
-        this.paddle.setSpeed(level.paddleSpeed());
-        this.paddle.addToGame(this);
+        paddle.setSpeed(level.paddleSpeed());
+        paddle.addToGame(this);
     }
 
     /**
      * Update the paddle - locate it in the middle of the screen.
      */
     public void updatePaddle() {
-        removeCollidable(this.paddle);
-        removeSprite(this.paddle);
+        removeCollidable(paddle);
+        removeSprite(paddle);
         createPaddle();
     }
 
@@ -311,22 +314,22 @@ public class GameLevel implements Animation {
             resetBallCounter();
             createBall();
         }
-        // countdown before turn starts.
-        this.runner.run(new CountdownAnimation(NUM_OF_SECONDS, COUNT_FROM, this.sprites));
-        // use our runner to run the current animation -- which is one turn of
+        // Countdown before turn starts.
+        runner.run(new CountdownAnimation(NUM_OF_SECONDS, COUNT_FROM, sprites));
+        // Use our runner to run the current animation -- which is one turn of
         // the game.
-        this.running = true;
-        this.runner.run(this);
+        running = true;
+        runner.run(this);
     }
 
     /**
      * Reset the ball counter.
      */
     public void resetBallCounter() {
-        this.ballsCounter = new Counter(level.numberOfBalls());
-        this.deathRegion.removeHitListener(this.ballRemover);
-        this.ballRemover = new BallRemover(this, ballsCounter);
-        this.deathRegion.addHitListener(this.ballRemover);
+        ballsCounter = new Counter(level.numberOfBalls());
+        deathRegion.removeHitListener(ballRemover);
+        ballRemover = new BallRemover(this, ballsCounter);
+        deathRegion.addHitListener(ballRemover);
     }
 
     /**
@@ -335,26 +338,26 @@ public class GameLevel implements Animation {
      * @param count the count
      */
     public void setBallCounter(int count) {
-        this.ballsCounter = new Counter(count);
+        ballsCounter = new Counter(count);
     }
 
     /**
      * Sets ball remover.
      */
     public void setBallRemover() {
-        this.ballRemover = new BallRemover(this, ballsCounter);
+        ballRemover = new BallRemover(this, ballsCounter);
     }
 
     /**
      * Draw the background on a given surface.
      */
     public void drawBackground() {
-        this.sprites.addSprite(level.getBackground());
+        sprites.addSprite(level.getBackground());
         Block block = new Block(new Point(0, 0), 800, 25);
         block.getCollisionRectangle().setFillColor(Color.WHITE);
         block.getCollisionRectangle().setColors(Color.WHITE);
-        this.sprites.addSprite(block);
-        this.sprites.addSprite(this.nameIndicator);
+        sprites.addSprite(block);
+        sprites.addSprite(nameIndicator);
     }
 
     /**
@@ -363,8 +366,8 @@ public class GameLevel implements Animation {
      * @param c a collidable
      */
     public void removeCollidable(Collidable c) {
-        if (this.environment.getCollidables().contains(c)) {
-            this.environment.getCollidables().remove(c);
+        if (environment.getCollidables().contains(c)) {
+            environment.getCollidables().remove(c);
         }
     }
 
@@ -374,26 +377,28 @@ public class GameLevel implements Animation {
      * @param s a sprite
      */
     public void removeSprite(Sprite s) {
-        if (this.sprites.getSpriteCollection().contains(s)) {
-            this.sprites.getSpriteCollection().remove(s);
+        if (sprites.getSpriteCollection().contains(s)) {
+            sprites.getSpriteCollection().remove(s);
         }
     }
 
     @Override
     public void doOneFrame(DrawSurface d) {
-        if ((this.blocksCounter.getValue() <= 0) || (this.ballsCounter.getValue() <= 0)) {
-            this.running = false;
+        // No more blocks or no more balls left.
+        if ((blocksCounter.getValue() <= 0) || (ballsCounter.getValue() <= 0)) {
+            running = false;
         }
-        this.sprites.drawAllOn(d);
-        this.sprites.notifyAllTimePassed();
-        if (this.keyboard.isPressed("p")) {
-            this.runner.run(new KeyPressStoppableAnimation(this.keyboard, SPACE_KEY, new PauseScreen(this.keyboard)));
+        sprites.drawAllOn(d);
+        sprites.notifyAllTimePassed();
+        // If the player wants to pause the game.
+        if (keyboard.isPressed("p")) {
+            runner.run(new KeyPressStoppableAnimation(keyboard, SPACE_KEY, new PauseScreen(keyboard)));
         }
     }
 
     @Override
     public boolean shouldStop() {
-        return !this.running;
+        return !running;
     }
 
 }

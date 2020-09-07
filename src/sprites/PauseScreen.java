@@ -10,7 +10,6 @@ import java.awt.Color;
  * The type Pause screen.
  */
 public class PauseScreen implements Animation {
-    // fields
     private KeyboardSensor keyboard;
     private boolean stop;
     /**
@@ -22,8 +21,9 @@ public class PauseScreen implements Animation {
         this.keyboard = k;
         this.stop = false;
     }
-    @Override
-    public void doOneFrame(DrawSurface d) {
+
+    // Draw a chess on the screen.
+    private void drawChess(DrawSurface d) {
         d.setColor(Color.WHITE);
         d.fillRectangle(0, 0, 800, 600);
         d.setColor(Color.BLACK);
@@ -37,13 +37,25 @@ public class PauseScreen implements Animation {
                 d.fillRectangle(100 + i * 200, 100 + j * 200, 100, 100);
             }
         }
-    d.setColor(Color.RED.darker());
+    }
+
+    // Draw the text on the pause screen.
+    private void drawText(DrawSurface d) {
+        d.setColor(Color.RED.darker());
         int yLocation = d.getHeight() / 2;
         d.drawText(260, yLocation - 30, "paused", 90);
         d.drawText(105, yLocation + 50, "press space to continue", 55);
     }
+
+    @Override
+    public void doOneFrame(DrawSurface d) {
+        // Draw chess background.
+        drawChess(d);
+        // Draw text.
+        drawText(d);
+    }
     @Override
     public boolean shouldStop() {
-        return this.stop;
+        return stop;
     }
 }

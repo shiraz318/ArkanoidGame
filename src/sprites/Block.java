@@ -26,24 +26,22 @@ public class Block implements Collidable, Sprite, HitNotifier {
     /**
      * The constant FONT.
      */
-// Static variables
     //public static final int HIT_POINTS = 1;
     public static final int FONT = 14;
-    //Fields
     private Rectangle block;
     private int hitPoints;
     private List<HitListener> hitListeners;
-    private int k = 0;
+    private int k;
     private Color fillK;
-    private int hitByNow = 0;
+    private int hitByNow;
     private int originalHitPoints;
-    private List<Integer> kListColor = new ArrayList<Integer>();
-    private List<Integer> kListImage = new ArrayList<Integer>();
-    private Map<Integer, Color> mapKListColor = new HashMap<Integer, Color>();
-    private Map<Integer, Image> imageMap = new HashMap<Integer, Image>();
-    private Image image = null;
-    private Image originalFillImage = null;
-    private Image previousImage = null;
+    private List<Integer> kListColor;
+    private List<Integer> kListImage;
+    private Map<Integer, Color> mapKListColor;
+    private Map<Integer, Image> imageMap;
+    private Image image;
+    private Image originalFillImage;
+    private Image previousImage;
 
     /**
      * Create a new Block.
@@ -53,6 +51,16 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param height    the height
      */
     public Block(Point upperLeft, double width, double height) {
+        this.k = 0;
+        this.hitByNow = 0;
+        this.kListColor = new ArrayList<Integer>();
+        this.kListImage = new ArrayList<Integer>();
+        this.mapKListColor = new HashMap<Integer, Color>();
+        this.imageMap = new HashMap<Integer, Image>();
+        this.image = null;
+        this.originalFillImage = null;
+        this.previousImage = null;
+
         this.block = new Rectangle(upperLeft, width, height);
         this.hitPoints = 1;
         this.originalHitPoints = this.hitPoints;
@@ -65,7 +73,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the hit by now
      */
     public int getHitByNow() {
-        return this.hitByNow;
+        return hitByNow;
     }
 
     /**
@@ -74,14 +82,14 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param i the
      */
     public void setHitByNow(int i) {
-        this.hitByNow += i;
+        hitByNow += i;
     }
 
     /**
      * Reset hit by now.
      */
     public void resetHitByNow() {
-        this.hitByNow = 0;
+        hitByNow = 0;
     }
 
 
@@ -91,9 +99,9 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param imag the imag
      */
     public void setImages(Image imag) {
-        this.image = imag;
-        this.originalFillImage = image;
-        this.previousImage = image;
+        image = imag;
+        originalFillImage = image;
+        previousImage = image;
     }
 
     /**
@@ -102,7 +110,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the original image
      */
     public Image getOriginalImage() {
-        return this.originalFillImage;
+        return originalFillImage;
     }
 
     /**
@@ -111,7 +119,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param im the im
      */
     public void setImage(Image im) {
-        this.image = im;
+        image = im;
     }
 
     /**
@@ -120,7 +128,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the image
      */
     public Image getImage() {
-        return this.image;
+        return image;
     }
 
     /**
@@ -129,7 +137,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param hitPointsToSet the hit points to set
      */
     public void setHitPoints(int hitPointsToSet) {
-        this.hitPoints = hitPointsToSet;
+        hitPoints = hitPointsToSet;
     }
 
     /**
@@ -138,7 +146,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param h the h
      */
     public void setOriginalHitPoints(int h) {
-        this.originalHitPoints = h;
+        originalHitPoints = h;
     }
 
     /**
@@ -147,7 +155,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the original hit points
      */
     public int getOriginalHitPoints() {
-        return this.originalHitPoints;
+        return originalHitPoints;
     }
 
     /**
@@ -156,7 +164,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the number of hit points
      */
     public int getHitPoints() {
-        return this.hitPoints;
+        return hitPoints;
     }
 
     /**
@@ -165,7 +173,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the "collision shape" of the object
      */
     public Rectangle getCollisionRectangle() {
-        return this.block;
+        return block;
     }
     /**
      * Notify the block that we collided with it at collisionPoint with a given velocity.
@@ -176,66 +184,73 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the new velocity expected after the hit
      */
     public Velocity hit(Ball hitter, Point collisionPoint, Velocity currentVelocity) {
-        // Set the hit points to one point less
-        if (this.hitPoints > 0) {
-            this.setHitPoints(this.hitPoints - 1);
+        // Set the hit points to one point less.
+        if (hitPoints > 0) {
+            setHitPoints(hitPoints - 1);
         }
         double dy = currentVelocity.getDy();
         double dx = currentVelocity.getDx();
-        Line up = this.block.getUpperLine();
-        Line down = this.block.getLowerLine();
-        Line right = this.block.getRightLine();
-        Line left = this.block.getLeftLine();
+        Line up = block.getUpperLine();
+        Line down = block.getLowerLine();
+        Line right = block.getRightLine();
+        Line left = block.getLeftLine();
 
-        // The collision is from the upper or lower side of the rectangle
+        // The collision is from the upper or lower side of the rectangle.
         if ((up.checkRange(collisionPoint)) || (down.checkRange(collisionPoint))) {
             dy = (-1 * dy);
         }
-        // The collision is from the right or left side of the rectangle
+        // The collision is from the right or left side of the rectangle.
         if ((right.checkRange(collisionPoint)) || (left.checkRange(collisionPoint))) {
             dx = (-1 * dx);
         }
-        this.notifyHit(hitter);
+        notifyHit(hitter);
         return new Velocity(dx, dy);
+    }
+
+    // Set the color of the block.
+    private boolean setColorOfBlock() {
+        boolean flag = true;
+        for (int i: kListColor) {
+            if (i == hitPoints) {
+                getCollisionRectangle().setFillColor(getMapFillKColor().get(i));
+                flag = false;
+            }
+        }
+        if (flag) block.setFillColor(getCollisionRectangle().getOriginalFillColor());
+        return flag;
+    }
+
+    // Set the image of the block.
+    private void setImageOfBlock(boolean flag) {
+        for (int i: kListImage) {
+            if (i == hitPoints) {
+                setImage(getImageMap().get(i));
+                flag = false;
+            }
+        }
+        if (flag) setImage(getOriginalImage());
     }
 
     @Override
     public void drawOn(DrawSurface d) {
-        boolean flag = true;
+        boolean flag = setColorOfBlock();
+        setImageOfBlock(flag);
 
-        for (int i: kListColor) {
-            if (i == hitPoints) {
-                this.getCollisionRectangle().setFillColor(getMapFillKColor().get(i));
-                flag = false;
-            }
-        }
-        if (flag) {
-            this.block.setFillColor(getCollisionRectangle().getOriginalFillColor());
-        }
-        for (int i: kListImage) {
-            if (i == hitPoints) {
-                this.setImage(getImageMap().get(i));
-                flag = false;
-            }
-        }
-        if (flag) {
-            setImage(getOriginalImage());
-        }
-        this.block.drawOn(d);
-        int x = (int) this.block.getUpperLeft().getX();
-        int y = (int) this.block.getUpperLeft().getY();
-        int wide = (int) this.block.getWidth();
-        int high = (int) this.block.getHeight();
-        if (this.image != null) {
-            d.drawImage(x, y, this.image);
-        }
+        block.drawOn(d);
 
-        Color frame = this.block.getFrameColor();
+        int x = (int) block.getUpperLeft().getX();
+        int y = (int) block.getUpperLeft().getY();
+        int wide = (int) block.getWidth();
+        int high = (int) block.getHeight();
+
+        if (image != null) d.drawImage(x, y, image);
+
+        Color frame = block.getFrameColor();
         if (frame != null) {
             d.setColor(frame);
             d.drawRectangle(x, y, wide, high);
         }
-        d.setColor(this.block.getTextColor());
+        d.setColor(block.getTextColor());
     }
 
     @Override
@@ -264,12 +279,12 @@ public class Block implements Collidable, Sprite, HitNotifier {
 
     @Override
     public void addHitListener(HitListener hl) {
-        this.hitListeners.add(hl);
+        hitListeners.add(hl);
     }
 
     @Override
     public void removeHitListener(HitListener hl) {
-        this.hitListeners.remove(hl);
+        hitListeners.remove(hl);
     }
 
     /**
@@ -279,8 +294,8 @@ public class Block implements Collidable, Sprite, HitNotifier {
      */
     private void notifyHit(Ball hitter) {
         // Make a copy of the hitListeners before iterating over them.
-        List<HitListener> listeners = new ArrayList<HitListener>(this.hitListeners);
-        // Notify all listeners about a hit event:
+        List<HitListener> listeners = new ArrayList<HitListener>(hitListeners);
+        // Notify all listeners about a hit event.
         for (HitListener hl : listeners) {
             hl.hitEvent(this, hitter);
         }
@@ -292,7 +307,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the hit listeners
      */
     public List<HitListener> getHitListeners() {
-        return this.hitListeners;
+        return hitListeners;
     }
 
     /**
@@ -301,7 +316,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param list the list
      */
     public void setKListColor(List<Integer> list) {
-        this.kListColor = list;
+        kListColor = list;
     }
 
     /**
@@ -310,7 +325,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the list color
      */
     public List<Integer> getkListColor() {
-        return this.kListColor;
+        return kListColor;
     }
 
     /**
@@ -319,7 +334,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the list image
      */
     public List<Integer> getkListImage() {
-        return this.kListImage;
+        return kListImage;
     }
 
     /**
@@ -328,7 +343,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param map the map
      */
     public void setMapKFillColor(Map<Integer, Color> map) {
-        this.mapKListColor = map;
+        mapKListColor = map;
     }
 
     /**
@@ -337,7 +352,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the map fill k color
      */
     public Map<Integer, Color> getMapFillKColor() {
-        return this.mapKListColor;
+        return mapKListColor;
     }
 
     /**
@@ -346,7 +361,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param map the map
      */
     public void setImageMap(Map<Integer, Image> map) {
-        this.imageMap = map;
+        imageMap = map;
     }
 
     /**
@@ -355,7 +370,7 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @return the image map
      */
     public Map<Integer, Image> getImageMap() {
-        return this.imageMap;
+        return imageMap;
     }
 
     /**
@@ -364,6 +379,6 @@ public class Block implements Collidable, Sprite, HitNotifier {
      * @param i the
      */
     public void setkListImage(List<Integer> i) {
-        this.kListImage = i;
+        kListImage = i;
     }
 }

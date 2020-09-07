@@ -11,7 +11,6 @@ import java.util.List;
  * @author Shiraz Berger
  */
 public class GameEnvironment {
-    // Fields
     private List<Collidable> collidables;
     /**
      * Create a new GameLevel environment.
@@ -26,7 +25,7 @@ public class GameEnvironment {
      * @param c the collidable to add
      */
     public void addCollidable(Collidable c) {
-        this.collidables.add(c);
+        collidables.add(c);
     }
 
     /**
@@ -35,7 +34,21 @@ public class GameEnvironment {
      * @return the collidables list
      */
     public List<Collidable> getCollidables() {
-        return this.collidables;
+        return collidables;
+    }
+
+    // Get a collisionInfo of the closest collision to a given trajectory.
+    private CollisionInfo findClosestCollision(Line trajectory, List<Point> collidePoints, List<Collidable> colliders) {
+        Point closestPoint = trajectory.findClosestPoint(collidePoints);
+        Collidable collideObject = collidables.get(0);
+        // Find the object that collide with trajectory.
+        for (Collidable c : colliders) {
+            if (c.getCollisionRectangle().checkIfPointIsOn(closestPoint)) {
+                collideObject = c;
+                break;
+            }
+        }
+        return new CollisionInfo(closestPoint, collideObject);
     }
 
     /**
@@ -50,28 +63,18 @@ public class GameEnvironment {
     public CollisionInfo getClosestCollision(Line trajectory) {
         boolean isCollide = false;
         List<Point> collidePoints = new ArrayList<Point>();
-        List<Collidable> colliders = new ArrayList<Collidable>(this.collidables);
+        List<Collidable> colliders = new ArrayList<Collidable>(collidables);
         for (Collidable c : colliders) {
             Point collidePoint = trajectory.closestIntersectionToStartOfLine(c.getCollisionRectangle());
-            // There is a collision
+            // There is a collision.
             if (collidePoint != null) {
                 isCollide = true;
                 collidePoints.add(collidePoint);
             }
         }
-        // There is no collision
-        if (!isCollide) {
-            return null;
-        }
-        Point closestPoint = trajectory.findClosestPoint(collidePoints);
-        Collidable collideObject = this.collidables.get(0);
-        // Find the object that collide with trajectory
-        for (Collidable c : colliders) {
-            if (c.getCollisionRectangle().checkIfPointIsOn(closestPoint)) {
-                collideObject = c;
-                break;
-            }
-        }
-        return new CollisionInfo(closestPoint, collideObject);
+        // There is no collision.
+        if (!isCollide) return null;
+
+        return findClosestCollision(trajectory, collidePoints, colliders);
     }
 }

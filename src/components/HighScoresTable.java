@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class HighScoresTable implements Serializable {
     private int size;
-    private List<ScoreInfo> scores = new ArrayList<ScoreInfo>();
+    private List<ScoreInfo> scores;
 
     /**
      * Instantiates a new High scores table.
@@ -28,6 +28,7 @@ public class HighScoresTable implements Serializable {
      * @param size the size
      */
     public HighScoresTable(int size) {
+        this.scores = new ArrayList<ScoreInfo>();
         this.size = size;
     }
 
@@ -38,7 +39,7 @@ public class HighScoresTable implements Serializable {
      * @return the table size
      */
     public int size() {
-        return this.size;
+        return size;
     }
 
     /**
@@ -47,7 +48,7 @@ public class HighScoresTable implements Serializable {
      * @return the high scores
      */
     public List<ScoreInfo> getHighScores() {
-        return this.scores;
+        return scores;
     }
 
     /**
@@ -57,21 +58,21 @@ public class HighScoresTable implements Serializable {
      * @return the rank
      */
     public int getRank(int score) {
-        for (ScoreInfo s: this.scores) {
+        for (ScoreInfo s: scores) {
             if (score > s.getScore()) {
-                return this.scores.indexOf(s) + 1;
+                return scores.indexOf(s) + 1;
             }
         }
-        return this.scores.size() + 1;
+        return scores.size() + 1;
     }
 
     /**
      * Clear the table.
      */
     public void clear() {
-        for (int i = 0; i > this.scores.size(); i++) {
-            ScoreInfo s = this.scores.get(0);
-            this.scores.remove(0);
+        for (int i = 0; i < scores.size(); i++) {
+            ScoreInfo s = scores.get(0);
+            scores.remove(0);
         }
     }
 
@@ -84,8 +85,8 @@ public class HighScoresTable implements Serializable {
     public void load(File filename) throws IOException {
         clear();
         HighScoresTable h = loadFromFile(filename);
-        this.scores = h.scores;
-        this.size = h.size;
+        scores = h.scores;
+        size = h.size;
     }
 
     /**
@@ -97,8 +98,7 @@ public class HighScoresTable implements Serializable {
     public void save(File filename) throws IOException {
         ObjectOutputStream objectOutputStream = null;
         try {
-            objectOutputStream = new ObjectOutputStream(
-                    new FileOutputStream(filename));
+            objectOutputStream = new ObjectOutputStream(new FileOutputStream(filename));
             objectOutputStream.writeObject(this);
         } catch (IOException e) {
             System.err.println("Failed saving object");
@@ -124,19 +124,15 @@ public class HighScoresTable implements Serializable {
         HighScoresTable highScoresTable = null;
         ObjectInputStream objectInputStream = null;
         try {
-            objectInputStream = new ObjectInputStream(
-                    new FileInputStream(filename));
-
-            // unsafe down casting, we better be sure that the stream really contains a Person!
+            objectInputStream = new ObjectInputStream(new FileInputStream(filename));
             highScoresTable = (HighScoresTable) objectInputStream.readObject();
-            // Can't find file to open
+            // Can't find file to open.
         } catch (FileNotFoundException e) {
             highScoresTable.doNothing();
-            //System.err.println("Unable to find file: " + filename);
-            // The class in the stream is unknown to the JVM
+            // The class in the stream is unknown to the JVM.
         } catch (ClassNotFoundException e) {
             System.err.println("Unable to find class for object in file: " + filename);
-            // Some other problem
+            // Some other problem.
         } catch (IOException e) {
             System.err.println("Failed reading object");
             e.printStackTrace(System.err);
@@ -165,13 +161,13 @@ public class HighScoresTable implements Serializable {
      * @param score the score
      */
     public void add(ScoreInfo score) {
-        //check if the player should get in the table
-        if (!(getRank(score.getScore()) > this.size)) {
-            this.scores.add(score);
+        // Check if the player should get in the table.
+        if (!(getRank(score.getScore()) > size)) {
+            scores.add(score);
             sort();
-            //check if a player should be removed
-            if (this.scores.size() > this.size) {
-                this.scores.remove(this.scores.size() - 1);
+            // Check if a player should be removed.
+            if (scores.size() > size) {
+                scores.remove(scores.size() - 1);
             }
         }
     }
@@ -183,7 +179,7 @@ public class HighScoresTable implements Serializable {
         for (int i = 0; i < scores.size() - 1; i++) {
             for (int j = 0; j < scores.size() - 1 - i; j++) {
                 if (scores.get(j).getScore() < scores.get(j + 1).getScore()) {
-                    Collections.swap(this.scores, j, j + 1);
+                    Collections.swap(scores, j, j + 1);
                 }
             }
         }

@@ -37,7 +37,7 @@ public class Level implements LevelInformation {
      * @param num the num
      */
     public void setNumberOfBalls(int num) {
-        this.numberOfBalls = num;
+        numberOfBalls = num;
     }
     /**
      * Initial ball velocities.
@@ -55,7 +55,7 @@ public class Level implements LevelInformation {
      * @param v the v
      */
     public void setInitialBallVelocities(List<Velocity> v) {
-        this.initialBallVelocities = v;
+        initialBallVelocities = v;
     }
     /**
      * Returns the addle speed.
@@ -73,7 +73,7 @@ public class Level implements LevelInformation {
      * @param s the s
      */
     public void setPaddleSpeed(int s) {
-        this.paddleSpeed = s;
+        paddleSpeed = s;
     }
     /**
      * Returns paddle width.
@@ -91,7 +91,7 @@ public class Level implements LevelInformation {
      * @param w the w
      */
     public void setPaddleWidth(int w) {
-        this.paddleWidth = w;
+        paddleWidth = w;
     }
     /**
      * Returns level name.
@@ -109,7 +109,7 @@ public class Level implements LevelInformation {
      * @param s the s
      */
     public void setLevelName(String s) {
-        this.levelName = s;
+        levelName = s;
     }
     /**
      * Gets background.
@@ -127,7 +127,7 @@ public class Level implements LevelInformation {
      * @param s the s
      */
     public void setGetBackground(Sprite s) {
-        this.getBackground = s;
+        getBackground = s;
     }
     /**
      * Returns blocks list.
@@ -145,7 +145,7 @@ public class Level implements LevelInformation {
      * @param b the b
      */
     public void setBlocks(List<Block> b) {
-        this.blocks = b;
+        blocks = b;
     }
     /**
      * Returns number of blocks to remove.
@@ -163,7 +163,7 @@ public class Level implements LevelInformation {
      * @param num the num
      */
     public void setNumberOfBlocksToRemove(int num) {
-        this.numberOfBlocksToRemove = num;
+        numberOfBlocksToRemove = num;
     }
 
 }

@@ -10,7 +10,6 @@ import java.awt.Color;
  * The type You win screen - a screen that appears when the player wins.
  */
 public class YouWinScreen implements Animation {
-    // fields
     private boolean stop;
     private Counter scoreCounter;
 
@@ -23,49 +22,57 @@ public class YouWinScreen implements Animation {
         this.stop = false;
         this.scoreCounter = scoreCounter;
     }
-    @Override
-    public void doOneFrame(DrawSurface d) {
-        d.setColor(Color.WHITE);
-        d.fillRectangle(0, 0, 800, 600);
-        d.setColor(Color.BLUE);
-        d.fillCircle(400, 400, 400);
-        d.setColor(Color.cyan);
-        d.fillCircle(400, 400, 370);
-        d.setColor(Color.GREEN);
-        d.fillCircle(400, 400, 340);
-        d.setColor(Color.YELLOW);
-        d.fillCircle(400, 400, 310);
-        d.setColor(Color.ORANGE);
-        d.fillCircle(400, 400, 280);
-        d.setColor(Color.RED);
-        d.fillCircle(400, 400, 250);
-        d.setColor(Color.WHITE);
-        d.fillCircle(400, 400, 220);
-        d.fillRectangle(0, 350, 800, 600);
+
+    // Draw clouds.
+    private void drawClouds(DrawSurface d) {
+        int radius = 40;
+        int[] yLocations = {350, 330, 340, 357};
+        d.fillRectangle(0, 350, d.getWidth(), d.getHeight());
         d.setColor(Color.LIGHT_GRAY);
-        d.fillCircle(30, 350, 40);
-        d.fillCircle(80, 330, 40);
-        d.fillCircle(120, 340, 40);
-        d.fillCircle(170, 357, 40);
+        for (int i = 0; i < yLocations.length; i++) {
+            d.fillCircle((i * 50) + 30, yLocations[i], radius);
+            d.fillCircle((i * -50) + 760, yLocations[i], radius);
+        }
         d.fillRectangle(0, 367, 180, 30);
-
-
-        d.fillCircle(760, 350, 40);
-        d.fillCircle(710, 330, 40);
-        d.fillCircle(660, 340, 40);
-        d.fillCircle(610, 357, 40);
         d.fillRectangle(615, 359, 200, 38);
+    }
 
+    // Draw a rainbow.
+    private void drawRainbow(DrawSurface d) {
+        int locationX = 400;
+        int locationY = 400;
+        int radius = 400;
+        Color[] colors = {Color.BLUE, Color.cyan, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED, Color.WHITE};
+        for (int i = 0; i < colors.length; i++) {
+            d.setColor(colors[i]);
+            d.fillCircle(locationX, locationY, radius - (i * 30));
+        }
 
+    }
+
+    // Draw the text on the screen.
+    private void drawText(DrawSurface d){
         d.setColor(Color.BLACK);
         int yLocation = d.getHeight() / 2;
         d.drawText(220, yLocation - 30, "You Win!", 80);
-        d.drawText(250, yLocation + 50, "Your score is " + this.scoreCounter.getValue(), 40);
+        d.drawText(250, yLocation + 50, "Your score is " + scoreCounter.getValue(), 40);
+    }
 
+    @Override
+    public void doOneFrame(DrawSurface d) {
+        // Draw background.
+        d.setColor(Color.WHITE);
+        d.fillRectangle(0, 0, d.getWidth(), d.getHeight());
+        // Draw a rainbow.
+        drawRainbow(d);
+        // Draw clouds.
+        drawClouds(d);
+       // Draw text.
+       drawText(d);
     }
 
     @Override
     public boolean shouldStop() {
-        return this.stop;
+        return stop;
     }
 }

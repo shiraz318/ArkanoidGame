@@ -17,11 +17,9 @@ import java.awt.Color;
  * @author Shiraz Berger
  */
 public class Paddle implements Sprite, Collidable {
-    // Static variables
     public static final int PADDLE = 1;
     //public static final int MOVE_PADDLE = 10;
     public static final int NUMBER_OF_REGIONS = 5;
-    // Fields
     private KeyboardSensor keyboard;
     private Rectangle paddle;
     private int speed;
@@ -44,35 +42,38 @@ public class Paddle implements Sprite, Collidable {
      * Move the paddle to the left.
      */
     public void moveLeft() {
-        double x = this.paddle.getUpperLeft().getX();
-        double y = this.paddle.getUpperLeft().getY();
+        double x = paddle.getUpperLeft().getX();
+        double y = paddle.getUpperLeft().getY();
         Point newUpperLeft;
         if ((x - speed) <= (GameLevel.FRAME_WIDTH)) {
             newUpperLeft = new Point(GameLevel.FRAME_WIDTH, y);
         } else {
             newUpperLeft = new Point(x - speed, y);
         }
-        Color color = this.paddle.getFillColor();
-        this.paddle = new Rectangle(newUpperLeft, this.paddle.getWidth(), this.paddle.getHeight());
-        this.paddle.setFillColor(color);
+        createPaddle(newUpperLeft);
+    }
+
+    // Create a paddle.
+    private void createPaddle(Point newUpperLeft) {
+        Color color = paddle.getFillColor();
+        paddle = new Rectangle(newUpperLeft, paddle.getWidth(), paddle.getHeight());
+        paddle.setFillColor(color);
     }
 
     /**
      * Move the paddle to the right.
      */
     public void moveRight() {
-        double wide = this.paddle.getWidth();
-        double x = this.paddle.getUpperLeft().getX();
-        double y = this.paddle.getUpperLeft().getY();
+        double wide = paddle.getWidth();
+        double x = paddle.getUpperLeft().getX();
+        double y = paddle.getUpperLeft().getY();
         Point newUpperLeft;
         if ((x + speed + wide) >= (GameLevel.WIDTH_GAME - GameLevel.FRAME_WIDTH)) {
             newUpperLeft = new Point(GameLevel.WIDTH_GAME - GameLevel.FRAME_WIDTH - wide, y);
         } else {
             newUpperLeft = new Point(x + speed, y);
         }
-        Color color = this.paddle.getFillColor();
-        this.paddle = new Rectangle(newUpperLeft, this.paddle.getWidth(), this.paddle.getHeight());
-        this.paddle.setFillColor(color);
+        createPaddle(newUpperLeft);
     }
     /**
      * Notify the paddle that time is pass.
@@ -91,7 +92,7 @@ public class Paddle implements Sprite, Collidable {
      * @param speedToSet the speed to change
      */
     public void setSpeed(int speedToSet) {
-        this.speed = speedToSet;
+        speed = speedToSet;
     }
 
     /**
@@ -100,8 +101,31 @@ public class Paddle implements Sprite, Collidable {
      * @param d the surface
      */
     public void drawOn(DrawSurface d) {
-        this.paddle.drawOn(d);
+        paddle.drawOn(d);
     }
+
+    private Velocity getVelocityByHitRegion(int hitRegion, Line tempTrajectory, double dx, double dy) {
+        switch (hitRegion) {
+            // Move 300 degrees.
+            case 0:
+                return Velocity.fromAngleAndSpeed(300, tempTrajectory.length());
+            // Move 330 degrees.
+            case 1:
+                return Velocity.fromAngleAndSpeed(330, tempTrajectory.length());
+            // Move vertically up.
+            case 2:
+                return new Velocity(dx, -dy);
+            // Move 30 degrees.
+            case 3:
+                return Velocity.fromAngleAndSpeed(30, tempTrajectory.length());
+            // Move 60 degrees.
+            case 4:
+                return Velocity.fromAngleAndSpeed(60, tempTrajectory.length());
+            default:
+                return new Velocity(dx, dy);
+        }
+    }
+
 
     /**
      * Gets the collision rectangle.
@@ -118,42 +142,17 @@ public class Paddle implements Sprite, Collidable {
         double dy = currentVelocity.getDy();
         double x = collisionPoint.getX();
         double y = collisionPoint.getY();
-        Velocity newVelocity = currentVelocity;
         Point currentPoint = new Point(x, y);
         Line tempTrajectory = new Line(currentPoint, new Point(x + dx, y + dy));
         int hitRegion = 0;
-        // Check in which region the ball hit
+        // Check in which region the ball hit.
         for (int i = 0; i < regions.length; i++) {
             if (regions[i].checkIfPointIsOn(collisionPoint)) {
                 hitRegion = i;
                 break;
             }
         }
-        switch (hitRegion) {
-            //move 300 degrees
-            case 0:
-                newVelocity = Velocity.fromAngleAndSpeed(300, tempTrajectory.length());
-                break;
-            //move 330 degrees
-            case 1:
-                newVelocity = Velocity.fromAngleAndSpeed(330, tempTrajectory.length());
-                break;
-            //move verticly up
-            case 2:
-                newVelocity = new Velocity(dx, -dy);
-                break;
-            //move 30 degrees
-            case 3:
-                newVelocity = Velocity.fromAngleAndSpeed(30, tempTrajectory.length());
-                break;
-            //move 60 degrees
-            case 4:
-                newVelocity = Velocity.fromAngleAndSpeed(60, tempTrajectory.length());
-                break;
-            default:
-                break;
-        }
-        return newVelocity;
+        return getVelocityByHitRegion(hitRegion, tempTrajectory, dx, dy);
     }
 
     /**
@@ -163,14 +162,14 @@ public class Paddle implements Sprite, Collidable {
      */
     public Rectangle[] setRegionArray() {
         Rectangle[] regions = new Rectangle[NUMBER_OF_REGIONS];
-        // Divide the width of the paddle in he number of regions
-        double widthOfRegion = (this.paddle.getWidth()) / NUMBER_OF_REGIONS;
-        double x = this.paddle.getUpperLeft().getX();
-        double y = this.paddle.getUpperLeft().getY();
-        double height = this.paddle.getHeight();
+        // Divide the width of the paddle in he number of regions.
+        double widthOfRegion = (paddle.getWidth()) / NUMBER_OF_REGIONS;
+        double x = paddle.getUpperLeft().getX();
+        double y = paddle.getUpperLeft().getY();
+        double height = paddle.getHeight();
         double newX;
         Point newUpperLeft;
-        // Each rectangle has the same height and width but a different upper left point
+        // Each rectangle has the same height and width but a different upper left point.
         for (int i = 0; i < regions.length; i++) {
             newX = x + (i * widthOfRegion);
             newUpperLeft = new Point(newX, y);

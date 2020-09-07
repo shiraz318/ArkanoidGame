@@ -10,8 +10,8 @@ import java.awt.Image;
  * The type Background.
  */
 public class Background implements Sprite {
-    private Color color = null;
-    private Image image = null;
+    private Color color;
+    private Image image;
 
     /**
      * Instantiates a new Background.
@@ -32,8 +32,8 @@ public class Background implements Sprite {
      */
     @Override
     public void drawOn(DrawSurface d) {
-        //there is no image to draw
-        if (this.image == null) {
+        // There is no image to draw.
+        if (image == null) {
             d.setColor(color);
             d.fillRectangle(0, 2 * (GameLevel.FRAME_WIDTH) - 5, GameLevel.WIDTH_GAME, GameLevel.HEIGHT_GAME);
         } else {

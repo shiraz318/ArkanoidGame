@@ -13,7 +13,6 @@ import java.util.List;
  * @author Shiraz Berger.
  */
 public class Rectangle {
-    //Fields
     private Point upperLeft;
     private double width;
     private double height;
@@ -27,7 +26,6 @@ public class Rectangle {
     private Color fillColor;
     private Color frameColor;
     private Color textColor;
-//    private boolean sholdK = false;
     private Color fillK;
     private Color originalFillColor;
     private Image originalFillImage;
@@ -64,7 +62,7 @@ public class Rectangle {
      * @return the frame color
      */
     public Color getFrameColor() {
-        return this.frameColor;
+        return frameColor;
     }
 
     /**
@@ -73,7 +71,7 @@ public class Rectangle {
      * @param c the c
      */
     public void setPreviousColor(Color c) {
-        this.previousColor = c;
+        previousColor = c;
     }
 
     /**
@@ -91,7 +89,7 @@ public class Rectangle {
      * @param color the color
      */
     public void setTextColor(Color color) {
-        this.textColor = color;
+        textColor = color;
     }
 
     /**
@@ -100,7 +98,7 @@ public class Rectangle {
      * @return the text color
      */
     public Color getTextColor() {
-        return this.textColor;
+        return textColor;
     }
 
     /**
@@ -109,7 +107,7 @@ public class Rectangle {
      * @param c the c
      */
     public void setFillK(Color c) {
-        this.fillK = c;
+        fillK = c;
     }
 
     /**
@@ -118,9 +116,9 @@ public class Rectangle {
      * @param colorToChange the color to change
      */
     public void setColors(Color colorToChange) {
-        this.fillColor = colorToChange;
-        this.originalFillColor = this.fillColor;
-        this.previousColor = this.fillColor;
+        fillColor = colorToChange;
+        originalFillColor = fillColor;
+        previousColor = fillColor;
     }
 
     /**
@@ -129,7 +127,7 @@ public class Rectangle {
      * @return the original fill color
      */
     public Color getOriginalFillColor() {
-        return this.originalFillColor;
+        return originalFillColor;
     }
 
     /**
@@ -138,7 +136,7 @@ public class Rectangle {
      * @param c the c
      */
     public void setFillColor(Color c) {
-        this.fillColor = c;
+        fillColor = c;
     }
 
     /**
@@ -147,7 +145,7 @@ public class Rectangle {
      * @return the k color
      */
     public Color getKColor() {
-        return this.fillK;
+        return fillK;
     }
 
     /**
@@ -156,7 +154,7 @@ public class Rectangle {
      * @param c the c
      */
     public void applyKColor(Color c) {
-        this.fillColor = c;
+        fillColor = c;
     }
 
     /**
@@ -165,7 +163,7 @@ public class Rectangle {
      * @param colorToChange the color to change
      */
     public void setFrameColor(Color colorToChange) {
-        this.frameColor = colorToChange;
+        frameColor = colorToChange;
     }
 
     /**
@@ -174,7 +172,7 @@ public class Rectangle {
      * @return the color
      */
     public Color getFillColor() {
-        return this.fillColor;
+        return fillColor;
     }
 
     /**
@@ -201,14 +199,14 @@ public class Rectangle {
      */
     public Line[] setLinesArray() {
         Line[] linesArr = new Line[4];
-        // The upper side of the rectangle
-        linesArr[0] = this.upperLine;
-        // The lower side of the rectangle
-        linesArr[1] = this.lowerLine;
-        // The right side of the rectangle
-        linesArr[2] = this.rightLine;
-        // The left side of thr rectangle
-        linesArr[3] = this.leftLine;
+        // The upper side of the rectangle.
+        linesArr[0] = upperLine;
+        // The lower side of the rectangle.
+        linesArr[1] = lowerLine;
+        // The right side of the rectangle.
+        linesArr[2] = rightLine;
+        // The left side of thr rectangle.
+        linesArr[3] = leftLine;
         return linesArr;
     }
 
@@ -218,7 +216,7 @@ public class Rectangle {
      * @return the width
      */
     public double getWidth() {
-        return this.width;
+        return width;
     }
 
     /**
@@ -227,7 +225,7 @@ public class Rectangle {
      * @return the height
      */
     public double getHeight() {
-        return this.height;
+        return height;
     }
 
     /**
@@ -236,7 +234,7 @@ public class Rectangle {
      * @return the upper left point
      */
     public Point getUpperLeft() {
-        return this.upperLeft;
+        return upperLeft;
     }
 
     /**
@@ -245,7 +243,7 @@ public class Rectangle {
      * @return the upper right point
      */
     public Point getUpperRight() {
-        return this.upperRight;
+        return upperRight;
     }
 
     /**
@@ -254,7 +252,7 @@ public class Rectangle {
      * @return the lower right point
      */
     public Point getLowerRight() {
-        return this.lowerRight;
+        return lowerRight;
     }
 
     /**
@@ -263,7 +261,7 @@ public class Rectangle {
      * @return the lower left point
      */
     public Point getLowerLeft() {
-        return this.lowerLeft;
+        return lowerLeft;
     }
 
     /**
@@ -272,7 +270,7 @@ public class Rectangle {
      * @return the upper line
      */
     public Line getUpperLine() {
-        return this.upperLine;
+        return upperLine;
     }
 
     /**
@@ -309,14 +307,11 @@ public class Rectangle {
      * @return true if the point is on the rectangle, and false otherwise
      */
     public boolean checkIfPointIsOn(Point point) {
-        Line up = this.upperLine;
-        Line down = this.lowerLine;
-        Line right = this.rightLine;
-        Line left = this.leftLine;
-        if (up.checkRange(point) || down.checkRange(point) || right.checkRange(point) || left.checkRange(point)) {
-            return true;
-        }
-        return false;
+        Line up = upperLine;
+        Line down = lowerLine;
+        Line right = rightLine;
+        Line left = leftLine;
+        return (up.checkRange(point) || down.checkRange(point) || right.checkRange(point) || left.checkRange(point));
     }
 
     /**
@@ -326,12 +321,12 @@ public class Rectangle {
      */
     public void drawOn(DrawSurface d) {
 
-        int x = (int) this.getUpperLeft().getX();
-        int y = (int) this.getUpperLeft().getY();
-        int wide = (int) this.getWidth();
-        int high = (int) this.getHeight();
-        if (this.fillColor != null) {
-            d.setColor(this.fillColor);
+        int x = (int) getUpperLeft().getX();
+        int y = (int) getUpperLeft().getY();
+        int wide = (int) getWidth();
+        int high = (int) getHeight();
+        if (fillColor != null) {
+            d.setColor(fillColor);
         }
         d.fillRectangle(x, y, wide, high);
     }
@@ -342,6 +337,6 @@ public class Rectangle {
      * @param p the p
      */
     public void setUpperLeft(Point p) {
-        this.upperLeft = p;
+        upperLeft = p;
     }
 }

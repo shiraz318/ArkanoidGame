@@ -8,11 +8,10 @@ import interfaces.Animation;
  * The type Key press stoppable animation.
  */
 public class KeyPressStoppableAnimation implements Animation {
-    // fields
     private KeyboardSensor sensor;
     private String key;
     private Animation animation;
-    private boolean stop = false;
+    private boolean stop;
     private boolean isAlreadyPressed;
 
     /**
@@ -23,6 +22,7 @@ public class KeyPressStoppableAnimation implements Animation {
      * @param animation the animation
      */
     public KeyPressStoppableAnimation(KeyboardSensor sensor, String key, Animation animation) {
+        this.stop = false;
         this.sensor = sensor;
         this.animation = animation;
         this.key = key;
@@ -32,24 +32,20 @@ public class KeyPressStoppableAnimation implements Animation {
     @Override
     public void doOneFrame(DrawSurface d) {
         animation.doOneFrame(d);
-        if (this.sensor.isPressed(this.key)) {
-            if (this.isAlreadyPressed) {
-                return;
-            } else {
+        if (sensor.isPressed(key) && !isAlreadyPressed) {
                 stop = true;
-            }
         } else {
-            this.isAlreadyPressed = false;
+            isAlreadyPressed = false;
         }
     }
 
     @Override
     public boolean shouldStop() {
-        if (this.stop) {
-            this.stop = false;
-            this.isAlreadyPressed = true;
-            return !this.stop;
+        if (stop) {
+            stop = false;
+            isAlreadyPressed = true;
+            return true;
         }
-        return this.stop;
+        return false;
     }
 }
